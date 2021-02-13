@@ -72,7 +72,6 @@ public class MouseLock : MonoBehaviour
     {
         if(Physics.Raycast(viewObject.position, viewObject.forward, out RaycastHit hit, 500, ~ignoreMask))
         {
-            Debug.Log(hit.collider.gameObject.name);
             lookPoint.position = hit.point;
         }
         else

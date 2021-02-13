@@ -12,7 +12,11 @@
     public const string DAMAGE_MARKER_ACTIVATE = "DAMAGE_MARKER_ACTIVATE";
     public const string CHANGE_MAX_HEALTH = "CHANGE_MAX_HEALTH";
     public const string CHANGE_SPRINT_COUNT = "CHANGE_SPRINT_COUNT";
+    public const string SPRINT_ACTION = "SPRINT_ACTION";
+    public const string START_SPRINT = "START_SPRINT";
+    public const string STOP_SPRINT = "STOP_SPRINT";
     public const string PLAYER_DEAD = "PLAYER_DEAD";
+
 
     public const string HIT = "HIT";
     public const string WEAPON_ARE_HIDDEN = "WEAPON_ARE_HIDDEN";

@@ -30,6 +30,10 @@ public class UIDispetcher : MonoBehaviour
     [SerializeField] private Slider damageBonusSlider;
     [SerializeField] private Slider invilnvurableBonusSlider;
 
+    [SerializeField]
+    [Tooltip("0 - влево, 1 - вправо")]
+    private List<GameObject> sprintMarkers;
+
     [SerializeField] private Animator scoreMultiplicatorAnim;
     [SerializeField] private List<Animator> damageMarkersAnimators;
     [SerializeField] private Animator damagePanelAnim;
@@ -59,7 +63,8 @@ public class UIDispetcher : MonoBehaviour
         Messenger.AddListener(GameEvent.PLAYER_DEAD, OnPlayerDead);
         Messenger<int>.AddListener(GameEvent.NEXT_WAVE, OnNextWave);
         Messenger<int>.AddListener(GameEvent.DAMAGE_MARKER_ACTIVATE, OnDamageMarkerActivate);
-
+        Messenger<Vector3>.AddListener(GameEvent.START_SPRINT, EnebleSprintEffect);
+        Messenger.AddListener(GameEvent.STOP_SPRINT, DisableAllSprintEffects);
         Messenger.AddListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
 
         //Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
@@ -78,6 +83,9 @@ public class UIDispetcher : MonoBehaviour
         Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusJump);
         Messenger<int>.RemoveListener(GameEvent.NEXT_WAVE, OnNextWave);
         Messenger<int>.RemoveListener(GameEvent.DAMAGE_MARKER_ACTIVATE, OnDamageMarkerActivate);
+
+        Messenger<Vector3>.RemoveListener(GameEvent.START_SPRINT, EnebleSprintEffect);
+        Messenger.RemoveListener(GameEvent.STOP_SPRINT, DisableAllSprintEffects);
 
         Messenger.RemoveListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
         //Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
@@ -208,6 +216,8 @@ public class UIDispetcher : MonoBehaviour
         soundsVolumeSlider.value = PlayerPrefs.GetFloat("Sounds", 0.25f);
         voiceVolumeSlider.value = PlayerPrefs.GetFloat("Voices", 1);
 
+        DisableAllSprintEffects();
+
         OnMusicValueChanged();
         OnMouseValueChanged();
         OnSoundsValueChanged();
@@ -333,19 +343,16 @@ public class UIDispetcher : MonoBehaviour
     }
     public void OnMusicValueChanged()
     {
-        Debug.Log("Музыка - " + musicVolumeSlider.value);
         PlayerPrefs.SetFloat("Music", musicVolumeSlider.value);
         Messenger<float>.Broadcast(GameEvent.MUSIC_CHANGED, musicVolumeSlider.value);
     }
     public void OnSoundsValueChanged()
     {
-        Debug.Log("Звуки - " + soundsVolumeSlider.value);
         PlayerPrefs.SetFloat("Sounds", soundsVolumeSlider.value);
         Messenger<float>.Broadcast(GameEvent.SOUNDS_CHANGED, soundsVolumeSlider.value);
     }
     public void OnVoiceValueChanged()
     {
-        Debug.Log("Голос - " + voiceVolumeSlider.value);
         PlayerPrefs.SetFloat("Voices", voiceVolumeSlider.value);
         Messenger<float>.Broadcast(GameEvent.VOICE_CHANGED, voiceVolumeSlider.value);
     }
@@ -369,6 +376,32 @@ public class UIDispetcher : MonoBehaviour
     {
         hitMarker.SetActive(true);
         Invoke("ReturnHitMarker", 0.5f);
+    }
+    private void EnebleSprintEffect(Vector3 direction)
+    {
+        if(Mathf.Abs(direction.x) > Mathf.Abs(direction.z))
+        {
+            if(direction.x > 0)
+            {
+                sprintMarkers[1].SetActive(true);
+            }
+            else
+            {
+                sprintMarkers[0].SetActive(true);
+            }
+        }
+        else
+        {
+            sprintMarkers[0].SetActive(true);
+            sprintMarkers[1].SetActive(true);
+        }
+    }
+    private void DisableAllSprintEffects()
+    {
+        foreach (var item in sprintMarkers)
+        {
+            item.SetActive(false);
+        }
     }
 
     public void SettingsPanelToggle()

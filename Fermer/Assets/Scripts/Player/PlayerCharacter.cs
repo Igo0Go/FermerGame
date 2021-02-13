@@ -6,17 +6,20 @@ using UnityEngine;
 public class PlayerCharacter : AliveController
 {
     [SerializeField] private List<AudioClip> damageClips;
+    [SerializeField] private AudioClip sprintClip;
 
     private AudioSource source;
 
     private void Awake()
     {
         Messenger<int>.AddListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulnerable);
-     //   Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
+        Messenger.AddListener(GameEvent.SPRINT_ACTION, PlaySprintSound);
+        //   Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
     private void OnDestroy()
     {
         Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulnerable);
+        Messenger.RemoveListener(GameEvent.SPRINT_ACTION, PlaySprintSound);
         //    Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
 
@@ -83,6 +86,11 @@ public class PlayerCharacter : AliveController
     private void OnTakeBonusInvulnerable(int value)
     {
         PlayerBonusStat.bonusPack[BonusType.Invulnerable] = value;
+    }
+
+    private void PlaySprintSound()
+    {
+        source.PlayOneShot(sprintClip);
     }
 
     public override void Death()
