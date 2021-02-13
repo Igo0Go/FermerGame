@@ -14,7 +14,7 @@ public class SceneController : MonoBehaviour
 {
     public List<Transform> playerStartPos;
     public List<Wave> waves;
-    public Transform lootSpawnPoit;
+    public Transform lootSpawnPoint;
     public List<GameObject> randomBots;
     public List<Transform> randomSpawnPoints;
     public AudioSource musicSource;
@@ -166,7 +166,7 @@ public class SceneController : MonoBehaviour
             {
                 if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
                 {
-                    Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoit.position, Quaternion.identity);
+                    Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
                 }
                 opportunityToCheck = false;
                 currentWave = null;

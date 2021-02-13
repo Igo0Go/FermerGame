@@ -11585,6 +11585,11 @@ PrefabInstance:
       objectReference: {fileID: 490005622}
     - target: {fileID: 5445313396460108824, guid: 9481324639b5bca49a966b41a82c25c0,
         type: 3}
+      propertyPath: lootSpawnPoint
+      value: 
+      objectReference: {fileID: 679236090}
+    - target: {fileID: 5445313396460108824, guid: 9481324639b5bca49a966b41a82c25c0,
+        type: 3}
       propertyPath: waves.Array.size
       value: 7
       objectReference: {fileID: 0}
@@ -14292,6 +14297,12 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 1675966725, guid: 9481324639b5bca49a966b41a82c25c0, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9481324639b5bca49a966b41a82c25c0, type: 3}
+--- !u!4 &679236090 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1172732005, guid: 9481324639b5bca49a966b41a82c25c0,
+    type: 3}
+  m_PrefabInstance: {fileID: 679236089}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &691529054
 Mesh:
   m_ObjectHideFlags: 0

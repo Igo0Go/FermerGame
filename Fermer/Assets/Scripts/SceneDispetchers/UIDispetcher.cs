@@ -230,10 +230,11 @@ public class UIDispetcher : MonoBehaviour
     }
     private void OnEnemyDead()
     {
-        if(scoreReturnTime > 0)
+        if(scoreReturnTime > 0 && PlayerBonusStat.scoreMultiplicator < 10)
         {
             PlayerBonusStat.scoreMultiplicator++;
             scoreMultiplicatorText.text = "X" + PlayerBonusStat.scoreMultiplicator;
+            scoreMultiplicatorText.color = Color.Lerp(Color.green, Color.red, 0.1f * PlayerBonusStat.scoreMultiplicator);
             scoreMultiplicatorAnim.SetTrigger("ChangeScoreMultiplicator");
         }
         scoreReturnTime = 5;
@@ -362,7 +363,7 @@ public class UIDispetcher : MonoBehaviour
     }
     private void OnChangeScore(int value)
     {
-        score += value;
+        score += value * PlayerBonusStat.scoreMultiplicator;
         scoreLabel.text = "Счёт: " + score;
     }
     private void OnChangeSprint(int value)
