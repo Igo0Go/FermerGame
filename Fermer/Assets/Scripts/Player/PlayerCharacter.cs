@@ -100,7 +100,7 @@ public class PlayerCharacter : AliveController
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag.Equals("Fire"))
+        if (other.CompareTag("Fire"))
         {
             ExplosionZone zone = other.GetComponent<ExplosionZone>();
             if (zone != null)
@@ -109,16 +109,16 @@ public class PlayerCharacter : AliveController
                 GetDamage(zone.damage);
             }
         }
-        else if (other.tag.Equals("LizerSword"))
+        else if (other.CompareTag("LizerSword"))
         {
             OnTakeDamageFromDirection(other.transform.position);
             GetDamage(10);
         }
-        else if(other.tag.Equals("Finish"))
+        else if(other.CompareTag("Finish"))
         {
             other.GetComponent<SceneController>().OnPlayerEntered();
         }
-        else if (other.tag.Equals("ReplicPoint"))
+        else if (other.CompareTag("ReplicPoint"))
         {
             other.GetComponent<ReplicPointScript>().PlayReplicas();
         }

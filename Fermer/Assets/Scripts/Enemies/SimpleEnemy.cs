@@ -28,12 +28,12 @@ public abstract class Enemy : AliveController
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag.Equals("Bullet"))
+        if(other.CompareTag("Bullet"))
         {
             Messenger.Broadcast(GameEvent.HIT);
             GetDamage(other.GetComponent<Bullet>().damage);
         }
-        else if(other.tag.Equals("Fire"))
+        else if(other.CompareTag("Fire"))
         {
             ExplosionZone zone = other.GetComponent<ExplosionZone>();
             if(zone != null)
@@ -51,18 +51,18 @@ public abstract class Enemy : AliveController
                 GetDamage(zone.damage);
             }
         }
-        else if(other.tag.Equals("Turret"))
+        else if(other.CompareTag("Turret"))
         {
             other.GetComponent<Turret>().AddTarget(transform);
         }
-        else if(other.tag.Equals("DeadZone"))
+        else if(other.CompareTag("DeadZone"))
         {
             Death();
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag.Equals("Turret"))
+        if (other.CompareTag("Turret"))
         {
             other.GetComponent<Turret>().RemoveTarget(transform);
         }

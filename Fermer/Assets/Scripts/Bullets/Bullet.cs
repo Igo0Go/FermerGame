@@ -12,9 +12,10 @@ public class Bullet : MonoBehaviour //уничтожается при перво
     
     [SerializeField, Tooltip("Наносит урон игроку (для врагов)")] protected bool playerReact = false;
 
+    protected LayerMask ignoreMask;
+    protected Vector3 pos;
+
     private Action<RaycastHit> hitAction;
-    private LayerMask ignoreMask;
-    private Vector3 pos;
 
     public virtual void Init(float speed, float lifetime, int damage, LayerMask ignoreMask)
     {
@@ -57,12 +58,12 @@ public class Bullet : MonoBehaviour //уничтожается при перво
         obj.GetComponent<Decal>().Init(1);
         obj.transform.parent = hit.collider.transform;
 
-        if (hit.collider.tag.Equals("Enemy"))
+        if (hit.collider.CompareTag("Enemy"))
         {
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
             Messenger.Broadcast(GameEvent.HIT);
         }
-        if(hit.collider.tag.Equals("Player"))
+        if(hit.collider.CompareTag("Player"))
         {
             hit.collider.GetComponent<PlayerCharacter>().OnTakeDamageFromDirection(transform.position);
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
@@ -73,7 +74,7 @@ public class Bullet : MonoBehaviour //уничтожается при перво
 
     private void ReactWithoutPlayer(RaycastHit hit)
     {
-        if (hit.collider.tag.Equals("Enemy"))
+        if (hit.collider.CompareTag("Enemy"))
         {
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
             Messenger.Broadcast(GameEvent.HIT);
