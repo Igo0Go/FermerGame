@@ -42,7 +42,8 @@ public class UIDispetcher : MonoBehaviour
     [SerializeField, Range(1, 120)] private float speedBonusTime = 60;
     [SerializeField, Range(1, 120)] private float damageBonusTime = 60;
     [SerializeField, Range(1, 120)] private float invilnirableBonusTime = 60;
-    
+
+    private bool opportunityToShowSettings = true;
     private int score;
     private float scoreReturnTime;
 
@@ -171,7 +172,7 @@ public class UIDispetcher : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Cancel"))
+        if (Input.GetButtonDown("Cancel") && opportunityToShowSettings)
             SettingsPanelToggle();
 
         CheckSliders();
@@ -222,6 +223,8 @@ public class UIDispetcher : MonoBehaviour
         OnMouseValueChanged();
         OnSoundsValueChanged();
         OnVoiceValueChanged();
+
+        opportunityToShowSettings = true;
     }
 
     private void OnNextWave(int number)
@@ -241,6 +244,7 @@ public class UIDispetcher : MonoBehaviour
     }
     private void OnPlayerDead()
     {
+        opportunityToShowSettings = false;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         Time.timeScale = 0;
