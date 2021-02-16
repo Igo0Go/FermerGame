@@ -9,10 +9,9 @@ public class Bullet : MonoBehaviour //уничтожается при перво
 
     [HideInInspector] public float speed;
     [HideInInspector] public int damage;
-    
     [SerializeField, Tooltip("Наносит урон игроку (для врагов)")] protected bool playerReact = false;
-
-    protected LayerMask ignoreMask;
+    [SerializeField] protected LayerMask ignoreMask;
+    
     protected Vector3 pos;
 
     private Action<RaycastHit> hitAction;
@@ -68,6 +67,14 @@ public class Bullet : MonoBehaviour //уничтожается при перво
             hit.collider.GetComponent<PlayerCharacter>().OnTakeDamageFromDirection(transform.position);
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
         }
+        if(hit.collider.CompareTag("Bullet"))
+        {
+            if(hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
+            {
+                bullet.Explosion();
+                Messenger.Broadcast(GameEvent.HIT);
+            }
+        }
 
         Destroy(gameObject);
     }
@@ -78,6 +85,14 @@ public class Bullet : MonoBehaviour //уничтожается при перво
         {
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
             Messenger.Broadcast(GameEvent.HIT);
+        }
+        if (hit.collider.CompareTag("Bullet"))
+        {
+            if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
+            {
+                bullet.Explosion();
+                Messenger.Broadcast(GameEvent.HIT);
+            }
         }
 
         GameObject obj = Instantiate(decal);

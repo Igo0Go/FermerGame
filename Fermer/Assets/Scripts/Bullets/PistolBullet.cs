@@ -29,6 +29,16 @@ public class PistolBullet : Bullet //летит сквозь врагов
             Messenger.Broadcast(GameEvent.HIT);
             return;
         }
+        else if (hit.collider.CompareTag("Bullet"))
+        {
+            if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
+            {
+                bullet.Explosion();
+                Messenger.Broadcast(GameEvent.HIT);
+                Destroy(gameObject);
+                return;
+            }
+        }
         else
         {
             GameObject obj = Instantiate(decal);
@@ -47,6 +57,15 @@ public class PistolBullet : Bullet //летит сквозь врагов
             hit.collider.GetComponent<AliveController>().Death();
             Messenger.Broadcast(GameEvent.HIT);
             return;
+        }
+        else if (hit.collider.CompareTag("Bullet"))
+        {
+            if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
+            {
+                bullet.Explosion();
+                Messenger.Broadcast(GameEvent.HIT);
+                return;
+            }
         }
     }
 }

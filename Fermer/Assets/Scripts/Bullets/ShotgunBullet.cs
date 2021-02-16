@@ -25,6 +25,14 @@ public class ShotgunBullet : Bullet //снаряд, который не удал
             if (numberOfBreaks <= 0)
                 Destroy(gameObject);
         }
+        else if (hit.collider.CompareTag("Bullet"))
+        {
+            if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
+            {
+                bullet.Explosion();
+                Messenger.Broadcast(GameEvent.HIT);
+            }
+        }
         else
         {
             GameObject obj = Instantiate(decal);

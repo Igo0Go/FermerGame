@@ -24,13 +24,13 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
     public override void Hit(RaycastHit hit)
     {
 
-        if (hit.collider.tag.Equals("Enemy"))
+        if (hit.collider.CompareTag("Enemy"))
         {
-            AliveController character = hit.collider.GetComponent<AliveController>();
-            character.GetDamage(damage);
+            //AliveController character = hit.collider.GetComponent<AliveController>();
+            //character.GetDamage(damage);
             Messenger.Broadcast(GameEvent.HIT);
         }
-        else if(hit.collider.tag.Equals("Player"))
+        else if(hit.collider.CompareTag("Player"))
         {
             hit.collider.GetComponent<PlayerCharacter>().OnTakeDamageFromDirection(new Vector2(transform.forward.x, transform.forward.z));
         }
@@ -46,4 +46,32 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
     {
         this.target = target;
     }
+
+    public void Explosion()
+    {
+        GameObject obj = Instantiate(decal);
+        obj.transform.position = transform.position;
+        obj.GetComponent<Decal>().Init(1.5f);
+        Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Fire"))
+        {
+            Explosion();
+        }
+        else if (other.CompareTag("Turret"))
+        {
+            other.GetComponent<Turret>().AddTarget(transform);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Turret"))
+        {
+            other.GetComponent<Turret>().RemoveTarget(transform);
+        }
+    }
+
 }
