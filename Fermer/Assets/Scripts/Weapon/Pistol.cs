@@ -78,7 +78,6 @@ public class Pistol : Weapon
         opportunityToShoot = false;
     }
 
-
     private void StartReloadSound()
     {
         source.PlayOneShot(reload);

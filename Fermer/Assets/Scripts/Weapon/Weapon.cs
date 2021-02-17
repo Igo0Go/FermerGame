@@ -15,12 +15,14 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] protected AudioSource source;
     [SerializeField] protected AudioClip shoot;
     [SerializeField] protected AudioClip reload;
+    [SerializeField] protected AudioClip fight;
     [SerializeField] private WeaponType type;
     
     [HideInInspector] public Transform lookPoint;
     [HideInInspector] public Animator anim;
     [HideInInspector] public bool opportunityToShoot;
-    
+
+    private bool opportunityToFight;
     private bool inMenu;
 
     void Awake()
@@ -56,6 +58,7 @@ public abstract class Weapon : MonoBehaviour
             }
             FirstShoot();
             SecondShoot();
+            Fight();
         }
     }
    
@@ -63,7 +66,25 @@ public abstract class Weapon : MonoBehaviour
     {
         anim.SetTrigger("Hide");
     }
-    
+
+    public void SetFightOpportunityAsTrue()
+    {
+        opportunityToFight = true;
+    }
+    public void SetFightOpportunityAsFalse()
+    {
+        opportunityToFight = false;
+    }
+
+    private void Fight()
+    {
+        if(Input.GetKeyDown(KeyCode.F) && opportunityToFight)
+        {
+            anim.SetTrigger("Fight");
+            source.PlayOneShot(fight);
+        }
+    }
+
 
     private void OnHideWeapon()
     {

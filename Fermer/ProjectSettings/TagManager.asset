@@ -12,6 +12,7 @@ TagManager:
   - Turret
   - DeadZone
   - ReplicPoint
+  - Blade
   layers:
   - Default
   - TransparentFX

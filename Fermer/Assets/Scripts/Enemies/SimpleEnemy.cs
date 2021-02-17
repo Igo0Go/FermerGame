@@ -59,6 +59,11 @@ public abstract class Enemy : AliveController
         {
             Death();
         }
+        else if (other.CompareTag("Blade"))
+        {
+            Messenger.Broadcast(GameEvent.HIT);
+            GetDamage(70);
+        }
     }
     private void OnTriggerExit(Collider other)
     {
