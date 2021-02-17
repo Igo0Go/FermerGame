@@ -16,6 +16,7 @@ public abstract class Enemy : AliveController
     [SerializeField, Range(1,100), Tooltip("Количество очков, получаемое за победу над врагом")] private int scoreForWin = 1;
     [SerializeField] private List<GameObject> lootPrefabs;
     [SerializeField] private GameObject postDeadDecal;
+    [SerializeField] private GameObject afterFightLoot;
     
     private Rigidbody rb;
 
@@ -24,6 +25,17 @@ public abstract class Enemy : AliveController
         Health = maxHealth;
         rb = GetComponent<Rigidbody>();
         ReturnRB();
+    }
+
+    protected virtual void OnFightAction()
+    {
+        Messenger<int>.Broadcast(GameEvent.ENEMY_HIT, scoreForWin);
+        Vector3 dir = new Vector3(Random.Range(-0.05f, 0.05f), 2, Random.Range(-0.05f, 0.05f));
+        Instantiate(afterFightLoot, transform.position + dir, Quaternion.identity).GetComponent<Rigidbody>()
+            .AddForce(dir, ForceMode.Impulse);
+        Instantiate(postDeadDecal, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
+        Messenger.Broadcast(GameEvent.ENEMY_DEAD);
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -62,7 +74,7 @@ public abstract class Enemy : AliveController
         else if (other.CompareTag("Blade"))
         {
             Messenger.Broadcast(GameEvent.HIT);
-            GetDamage(70);
+            OnFightAction();
         }
     }
     private void OnTriggerExit(Collider other)
