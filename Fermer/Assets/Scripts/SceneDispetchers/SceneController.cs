@@ -25,11 +25,14 @@ public class SceneController : MonoBehaviour
     public List<Transform> pointsInAir;
     public List<ReplicPointScript> replicPoints;
 
+    [SerializeField] private LineRenderer lineRenderer;
+
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
     private int currentMusicIndex;
     private List<GameObject> currentWave;
     private bool opportunityToCheck;
+    private bool rayToLast;
 
     public void OnPlayerEntered()
     {
@@ -126,6 +129,8 @@ public class SceneController : MonoBehaviour
     {
         currentWaveNumber = -1;
 
+        lineRenderer.positionCount = 2;
+
         if (SavedObjects.UIDispetcher == null)
         {
             SavedObjects.UIDispetcher = Instantiate(playerUI);
@@ -149,10 +154,11 @@ public class SceneController : MonoBehaviour
     private void Update()
     {
         CheckWave();
+        RayToLast();
     }
     private void CheckWave()
     {
-        if(currentWave != null && opportunityToCheck)
+        if (currentWave != null && opportunityToCheck)
         {
             for (int i = 0; i < currentWave.Count; i++)
             {
@@ -162,8 +168,12 @@ public class SceneController : MonoBehaviour
                     i--;
                 }
             }
+
+            rayToLast = currentWave.Count == 1;
+
             if (currentWave.Count == 0)
             {
+                rayToLast = true;
                 if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
                 {
                     Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
@@ -189,6 +199,26 @@ public class SceneController : MonoBehaviour
         musicSource.clip = randomMusic[currentMusicIndex];
         musicSource.Play();
         Invoke("NextMusic", musicSource.clip.length + 1);
+    }
+
+    private void RayToLast()
+    {
+        if(currentWave != null)
+        {
+            rayToLast = currentWave.Count == 1;
+        }
+
+
+        if(rayToLast)
+        {
+            lineRenderer.enabled = true;
+            lineRenderer.SetPosition(0, transform.position + Vector3.up * 50);
+            lineRenderer.SetPosition(1, currentWave[0].transform.position);
+        }
+        else
+        {
+            lineRenderer.enabled = false;
+        }
     }
 
     [SerializeField] private GameObject player;
