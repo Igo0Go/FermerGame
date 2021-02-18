@@ -7,7 +7,6 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Goose : Enemy //Гусь с ракетной установкой (по совместительству ваш худший кошмар)
 {
-    [SerializeField, Range(1,100)] private int damageForOneBullet;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField, Tooltip("Слои, на котороые гусь не будет реагировтаь")] private LayerMask ignoreMask;
     [SerializeField, Tooltip("Цель, которую гусь будет атаковать")] private Transform target;
@@ -38,6 +37,24 @@ public class Goose : Enemy //Гусь с ракетной установкой (
         }
         base.GetDamage(damage);
     }
+    protected override void OnFightAction()
+    {
+        Messenger<int>.Broadcast(GameEvent.ENEMY_HIT, scoreForWin);
+        if (Health - 50 > 0)
+        {
+            GetDamage(50);
+        }
+        else
+        {
+            Vector3 dir = new Vector3(Random.Range(-0.05f, 0.05f), 2, Random.Range(-0.05f, 0.05f));
+            Instantiate(afterFightLoot, transform.position + dir, Quaternion.identity).GetComponent<Rigidbody>()
+                .AddForce(dir, ForceMode.Impulse);
+            Instantiate(postDeadDecal, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
+            Messenger.Broadcast(GameEvent.ENEMY_DEAD);
+            Destroy(gameObject);
+        }
+    }
+
 
     private void Start()
     {
@@ -118,7 +135,7 @@ public class Goose : Enemy //Гусь с ракетной установкой (
         currentBullet.transform.position = shootPoints[currentShootPoint].position;
         currentBullet.transform.rotation = transform.rotation;
         Bullet bulletScript = currentBullet.GetComponent<Bullet>();
-        bulletScript.Init(bulletSpeed, 5, damageForOneBullet, ignoreMask);
+        bulletScript.Init(bulletSpeed, 5, damage, ignoreMask);
         if (bulletScript is TargetTrackerBullet)
         {
             ((TargetTrackerBullet)bulletScript).SetTarget(target);

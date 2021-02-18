@@ -2027,6 +2027,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 50
   scoreForWin: 1
+  damage: 15
   lootPrefabs:
   - {fileID: 9008769637230449502, guid: 73b71bad44adcac43a5fe283849dbe75, type: 3}
   - {fileID: 8290260595965382818, guid: 68918de8e756c6343be64d5ab1e0521e, type: 3}
@@ -2041,7 +2042,6 @@ MonoBehaviour:
     type: 3}
   afterFightLoot: {fileID: 2950403070913521480, guid: 287352674b5b2814fa4560b4967570b4,
     type: 3}
-  damageForOneBullet: 30
   bulletPrefab: {fileID: 795875767584214075, guid: 064dc66bd6738f94388a74b881863556,
     type: 3}
   ignoreMask:

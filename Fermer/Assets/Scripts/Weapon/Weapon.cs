@@ -67,24 +67,17 @@ public abstract class Weapon : MonoBehaviour
         anim.SetTrigger("Hide");
     }
 
-    public void SetFightOpportunityAsTrue()
-    {
-        opportunityToFight = true;
-    }
-    public void SetFightOpportunityAsFalse()
-    {
-        opportunityToFight = false;
-    }
-
+    public void SetFightOpportunityAsTrue() => opportunityToFight = true;
+    public void SetFightOpportunityAsFalse() => opportunityToFight = false;
+    public void PlayFightSound() => source.PlayOneShot(fight);
+    
     private void Fight()
     {
         if(Input.GetKeyDown(KeyCode.F) && opportunityToFight)
         {
             anim.SetTrigger("Fight");
-            source.PlayOneShot(fight);
         }
     }
-
 
     private void OnHideWeapon()
     {

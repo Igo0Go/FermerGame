@@ -13,10 +13,11 @@ public enum EnemyState
 [RequireComponent(typeof(Rigidbody))]
 public abstract class Enemy : AliveController
 {
-    [SerializeField, Range(1,100), Tooltip("Количество очков, получаемое за победу над врагом")] private int scoreForWin = 1;
+    [SerializeField, Range(1,100), Tooltip("Количество очков, получаемое за победу над врагом")] protected int scoreForWin = 1;
+    [SerializeField, Range(1, 100)] protected int damage = 10;
     [SerializeField] private List<GameObject> lootPrefabs;
-    [SerializeField] private GameObject postDeadDecal;
-    [SerializeField] private GameObject afterFightLoot;
+    [SerializeField] protected GameObject postDeadDecal;
+    [SerializeField] protected GameObject afterFightLoot;
     
     private Rigidbody rb;
 
@@ -88,8 +89,11 @@ public abstract class Enemy : AliveController
     public override void Death()
     {
         Messenger<int>.Broadcast(GameEvent.ENEMY_HIT, scoreForWin);
-        int cycleCount = Random.Range(0, lootPrefabs.Count);
-        cycleCount /= 3;
+        int cycleCount = Random.Range(0, 3);
+
+        if (cycleCount > lootPrefabs.Count)
+            cycleCount = lootPrefabs.Count;
+
         while (cycleCount > 0)
         {
             int number = Random.Range(0, lootPrefabs.Count);
@@ -140,7 +144,7 @@ public class SimpleEnemy : Enemy
                 {
                     shootPoint.LookAt(hitObject.transform.position + Vector3.up);   
                     GameObject currentBullet = Instantiate(bulletPrefab, shootPoint.position, shootPoint.rotation) as GameObject;
-                    currentBullet.GetComponent<Bullet>().Init(50, 5, 10, ignoreMask);
+                    currentBullet.GetComponent<Bullet>().Init(50, 5, damage, ignoreMask);
                     recoil = true;
                     Invoke("StopRecoil", 1);
                 }
