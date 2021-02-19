@@ -3363,6 +3363,7 @@ MonoBehaviour:
   - {fileID: 1377714155702016364}
   - {fileID: 1377714155373087668}
   - {fileID: 1377714155634629526}
+  timeBetweenShootActions: 0
 --- !u!135 &1377714156902172395
 SphereCollider:
   m_ObjectHideFlags: 0

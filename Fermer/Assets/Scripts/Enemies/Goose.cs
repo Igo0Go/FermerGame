@@ -14,7 +14,7 @@ public class Goose : Enemy //Гусь с ракетной установкой (
     [SerializeField, Range(0.01f, 1), Tooltip("Время между выстрелами")] float recoilTime = 0.4f;
     [SerializeField, Range(1, 50), Tooltip("Скорость запуска снаряда")] float bulletSpeed = 10;
     [SerializeField, Tooltip("Точки, в которых бдут по очереди появляться снаряды при выстреле")] List<Transform> shootPoints;
-
+    [SerializeField, Range(0, 3)] private float timeBetweenShootActions = 1f;
 
     private NavMeshAgent agent;
     private EnemyState state;
@@ -54,7 +54,6 @@ public class Goose : Enemy //Гусь с ракетной установкой (
             Destroy(gameObject);
         }
     }
-
 
     private void Start()
     {
@@ -140,9 +139,15 @@ public class Goose : Enemy //Гусь с ракетной установкой (
         {
             ((TargetTrackerBullet)bulletScript).SetTarget(target);
         }
-        anim.SetInteger("Shoot", currentShootPoint + 1);
+        Invoke("NextShootAction", timeBetweenShootActions);
         state = EnemyState.Recoil;
     }
+
+    private void NextShootAction()
+    {
+        anim.SetInteger("Shoot", currentShootPoint + 1);
+    }
+
 
     #region Обработчики событий анимации
     private void StopShoot()

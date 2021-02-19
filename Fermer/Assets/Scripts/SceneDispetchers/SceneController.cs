@@ -25,7 +25,9 @@ public class SceneController : MonoBehaviour
     public List<Transform> pointsInAir;
     public List<ReplicPointScript> replicPoints;
 
+    [SerializeField] private List<TranslateScript> movingCubes;
     [SerializeField] private LineRenderer lineRenderer;
+    [SerializeField] private Transform pointer;
 
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
@@ -98,6 +100,18 @@ public class SceneController : MonoBehaviour
         {
             currentWave.Add(Instantiate(airBot, item.position, Quaternion.identity));
         }
+        foreach (var item in movingCubes)
+        {
+            item.ToDefaultPos();
+        }
+        foreach (var item in movingCubes)
+        {
+            if(UnityEngine.Random.Range(0,2) > 0)
+            {
+                item.ChangePosition();
+            }
+        }
+
         List<ReplicItem> currentRandomReplic = new List<ReplicItem>() { randomReplic[UnityEngine.Random.Range(0, randomReplic.Count)] };
         replicDispether.AddInList(currentRandomReplic);
         Invoke("ReturnOpportunityToCheck", currentRandomReplic[0].clip.length + 5);
@@ -208,11 +222,10 @@ public class SceneController : MonoBehaviour
             rayToLast = currentWave.Count == 1;
         }
 
-
         if(rayToLast)
         {
             lineRenderer.enabled = true;
-            lineRenderer.SetPosition(0, transform.position + Vector3.up * 50);
+            lineRenderer.SetPosition(0, pointer.position);
             lineRenderer.SetPosition(1, currentWave[0].transform.position);
         }
         else

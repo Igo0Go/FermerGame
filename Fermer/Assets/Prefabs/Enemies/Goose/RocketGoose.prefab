@@ -2056,6 +2056,7 @@ MonoBehaviour:
   - {fileID: 8103585887475951017}
   - {fileID: 8103585888650949667}
   - {fileID: 8103585888690666960}
+  timeBetweenShootActions: 2
 --- !u!136 &8103585888823266108
 CapsuleCollider:
   m_ObjectHideFlags: 0

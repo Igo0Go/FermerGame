@@ -13,6 +13,7 @@ TagManager:
   - DeadZone
   - ReplicPoint
   - Blade
+  - Info
   layers:
   - Default
   - TransparentFX

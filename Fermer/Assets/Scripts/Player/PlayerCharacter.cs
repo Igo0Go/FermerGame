@@ -122,5 +122,17 @@ public class PlayerCharacter : AliveController
         {
             other.GetComponent<ReplicPointScript>().PlayReplicas();
         }
+        else if (other.CompareTag("Info"))
+        {
+            other.GetComponent<InfoPanel>().SetState(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Info"))
+        {
+            other.GetComponent<InfoPanel>().SetState(false);
+        }
     }
 }
