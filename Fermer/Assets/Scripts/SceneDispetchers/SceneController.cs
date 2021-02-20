@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 
 public static class SavedObjects
 {
@@ -35,6 +36,9 @@ public class SceneController : MonoBehaviour
     private List<GameObject> currentWave;
     private bool opportunityToCheck;
     private bool rayToLast;
+
+    private string musicFolderPath = Path.Combine(Application.streamingAssetsPath, "Music");
+
 
     public void OnPlayerEntered()
     {
@@ -136,6 +140,10 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
+        if(TryLoadPlayerMusic(out List<AudioClip> clips))
+        {
+            randomMusic = clips;
+        }
         Setup();
     }
 
@@ -232,6 +240,37 @@ public class SceneController : MonoBehaviour
         {
             lineRenderer.enabled = false;
         }
+    }
+    private bool TryLoadPlayerMusic(out List<AudioClip> audioClips)
+    {
+        try
+        {
+            audioClips = null;
+            string[] files = Directory.GetFiles(musicFolderPath);
+            if (files.Length == 0)
+            {
+                return false;
+            }
+            audioClips = new List<AudioClip>();
+
+            DirectoryInfo di = new DirectoryInfo(musicFolderPath);
+            FileInfo[] UserFiles = di.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
+            if (UserFiles.Length > 0)// если массив не пуст
+            {
+                for (int i = 0; i < UserFiles.Length; i++)
+                {
+                    WWW www = new WWW(Path.Combine(musicFolderPath, UserFiles[i].Name));
+                    AudioClip clip = www.GetAudioClip(false, true, AudioType.MPEG);
+                    audioClips.Add(clip);
+                }
+            }
+        }
+        catch
+        {
+            audioClips = null;
+            return false;
+        }
+        return true;
     }
 
     [SerializeField] private GameObject player;
