@@ -26,9 +26,11 @@ public class SceneController : MonoBehaviour
     public List<Transform> pointsInAir;
     public List<ReplicPointScript> replicPoints;
 
+    [SerializeField] private List<GameObject> alarmBots;
     [SerializeField] private List<TranslateScript> movingCubes;
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private Transform pointer;
+    [SerializeField] private ArenaController arenaController;
 
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
@@ -36,9 +38,12 @@ public class SceneController : MonoBehaviour
     private List<GameObject> currentWave;
     private bool opportunityToCheck;
     private bool rayToLast;
+    private bool controlMovingCubes;
+    private bool alarm;
 
     private string musicFolderPath = Path.Combine(Application.streamingAssetsPath, "Music");
 
+    public void NoMovingCubesControl() => controlMovingCubes = false;
 
     public void OnPlayerEntered()
     {
@@ -49,11 +54,25 @@ public class SceneController : MonoBehaviour
         SavedObjects.toArena = true;
     }
 
+    public void Alarm()
+    {
+        alarm = true;
+        if(controlMovingCubes)
+        {
+            arenaController.AllToDefault();
+        }
+        currentWave = new List<GameObject>();
+        foreach (var item in alarmBots)
+        {
+            currentWave.Add(Instantiate(item, randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
+        }
+    }
+
     private void NextWave()
     {
         float replicasTime = 0;
         currentWaveNumber++;
-        if (currentWaveNumber > 0)
+        if (currentWaveNumber > 0 && controlMovingCubes)
         {
             foreach (var item in waves[currentWaveNumber - 1].movingCubes)
             {
@@ -69,7 +88,7 @@ public class SceneController : MonoBehaviour
         for (int i = 0; i < waves[currentWaveNumber].airBotsCount; i++)
         {
             int number = i;
-            if(number >= pointsInAir.Count)
+            if (number >= pointsInAir.Count)
             {
                 number -= i;
             }
@@ -80,7 +99,7 @@ public class SceneController : MonoBehaviour
         {
             replicasTime += waves[currentWaveNumber].voicesForWave[i].clip.length;
         }
-        if(currentWaveNumber > 0)
+        if (currentWaveNumber > 0 && controlMovingCubes)
         {
             foreach (var item in waves[currentWaveNumber - 1].movingCubes)
             {
@@ -104,15 +123,19 @@ public class SceneController : MonoBehaviour
         {
             currentWave.Add(Instantiate(airBot, item.position, Quaternion.identity));
         }
-        foreach (var item in movingCubes)
+
+        if (controlMovingCubes)
         {
-            item.ToDefaultPos();
-        }
-        foreach (var item in movingCubes)
-        {
-            if(UnityEngine.Random.Range(0,2) > 0)
+            foreach (var item in movingCubes)
             {
-                item.ChangePosition();
+                item.ToDefaultPos();
+            }
+            foreach (var item in movingCubes)
+            {
+                if (UnityEngine.Random.Range(0, 2) > 0)
+                {
+                    item.ChangePosition();
+                }
             }
         }
 
@@ -123,9 +146,12 @@ public class SceneController : MonoBehaviour
 
     private void SetPolygone()
     {
-        foreach (var item in waves[currentWaveNumber].movingCubes)
+        if(controlMovingCubes)
         {
-            item.ChangePosition();
+            foreach (var item in waves[currentWaveNumber].movingCubes)
+            {
+                item.ChangePosition();
+            }
         }
     }
 
@@ -149,6 +175,7 @@ public class SceneController : MonoBehaviour
 
     private void Setup()
     {
+        controlMovingCubes = true;
         currentWaveNumber = -1;
 
         lineRenderer.positionCount = 2;
@@ -195,17 +222,20 @@ public class SceneController : MonoBehaviour
 
             if (currentWave.Count == 0)
             {
-                rayToLast = true;
-                if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
+                if(!alarm)
                 {
-                    Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
+                    rayToLast = true;
+                    if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
+                    {
+                        Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
+                    }
+                    opportunityToCheck = false;
+                    currentWave = null;
+                    if (currentWaveNumber < waves.Count - 1)
+                        NextWave();
+                    else
+                        RandomWave();
                 }
-                opportunityToCheck = false;
-                currentWave = null;
-                if (currentWaveNumber < waves.Count-1)
-                    NextWave();
-                else
-                    RandomWave();
             }
         }
     }

@@ -34,6 +34,11 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
         {
             hit.collider.GetComponent<PlayerCharacter>().OnTakeDamageFromDirection(new Vector2(transform.forward.x, transform.forward.z));
         }
+        else if(hit.collider.CompareTag("VIP"))
+        {
+            hit.collider.GetComponent<AliveController>().GetDamage(damage);
+            Messenger.Broadcast(GameEvent.HIT);
+        }
 
         GameObject obj = Instantiate(decal);
         obj.transform.position = hit.point + hit.normal * 0.3f;

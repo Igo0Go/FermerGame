@@ -425,7 +425,6 @@ public class UIDispetcher : MonoBehaviour
     }
     public void ExitGame()
     {
-        OnExit();
         Application.Quit();
     }
 

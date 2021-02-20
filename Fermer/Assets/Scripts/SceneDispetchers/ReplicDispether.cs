@@ -32,28 +32,29 @@ public class ReplicDispether : MonoBehaviour
     {
         replicas = new List<ReplicItem>();
         source = GetComponent<AudioSource>();
+        replicPanel.SetActive(false);
     }
     public void ClearList()
     {
-        if(source.isPlaying)
-            source.Stop();
-        replicPanel.SetActive(false);
         replicas.Clear();
     }
     public void AddInList(List<ReplicItem> items)
     {
         replicas.AddRange(items);
         if(bufer == null)
-            CheckReplicas();
+            StartCoroutine(CheckReplicas(0));
     }
-    public void CheckReplicas()
+    public IEnumerator CheckReplicas(float time)
     {
+        yield return new WaitForSeconds(time);
         source.Stop();
         replicPanel.SetActive(false);
         if (replicas.Count > 0)
             StartReplica();
         else
+        {
             bufer = null;
+        }
     }
     private void StartReplica()
     {
@@ -66,7 +67,7 @@ public class ReplicDispether : MonoBehaviour
             replicText.color = bufer.textColor;
         }
         source.Play();
-        Invoke("CheckReplicas", source.clip.length + 0.3f);
+        StartCoroutine(CheckReplicas(source.clip.length + 0.3f));
         replicas.Remove(replicas[0]);
     }
 }

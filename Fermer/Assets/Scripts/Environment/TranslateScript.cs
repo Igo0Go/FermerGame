@@ -8,13 +8,13 @@ public class TranslateScript : MonoBehaviour
     [SerializeField, Range(0, 10)] private float delay = 0;
     [SerializeField] private Vector3 offsetPos;
     [SerializeField, Space(10)] private bool debug;
+    public bool loopMove = false;
 
     private Vector3 startPos;
     private Vector3 targetPos;
     Vector3 dir;
     private int multiplicator = 1;
     private bool move;
-    private float currentSpeed;
 
     private float DistanceToTarget => Vector3.Distance(transform.position, targetPos);
 
@@ -28,13 +28,22 @@ public class TranslateScript : MonoBehaviour
             MoveToTarget();
     }
 
+    public void SetSpeed(float newSpeed)
+    {
+        if(newSpeed < 0)
+        {
+            newSpeed *= -1;
+        }
+        speed = newSpeed;
+    }
+
     public void ToDefaultPos()
     {
         targetPos = startPos;
         dir = targetPos - transform.position;
-        currentSpeed = 10;
         multiplicator = 1;
         move = true;
+        loopMove = false;
     }
 
     public void ChangePosition()
@@ -44,7 +53,6 @@ public class TranslateScript : MonoBehaviour
 
     private void SetTargetPos()
     {
-        currentSpeed = speed;
         targetPos = transform.position + offsetPos * multiplicator;
         multiplicator *= -1;
         dir = targetPos - transform.position;
@@ -60,6 +68,10 @@ public class TranslateScript : MonoBehaviour
         {
             transform.position = targetPos;
             move = false;
+            if(loopMove)
+            {
+                ChangePosition();
+            }
         }
     }
 

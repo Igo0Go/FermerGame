@@ -25,7 +25,7 @@ public class PistolBullet : Bullet //летит сквозь врагов
     {
         if (hit.collider.CompareTag("Enemy"))
         {
-            hit.collider.GetComponent<AliveController>().Death();
+            hit.collider.GetComponent<AliveController>().GetDamage(90);
             Messenger.Broadcast(GameEvent.HIT);
             return;
         }
