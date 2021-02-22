@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HistoryScene.unity
     guid: cb354ed6cace2fa4592fd2c4c2bda3b4
+  - enabled: 1
+    path: Assets/cemetery halloween set/Demo/FinalScene.unity
+    guid: 9ada07f73fd6cce47834106888ee8a4d
   m_configObjects: {}

@@ -23,9 +23,12 @@ public class VIP : AliveController
         if(Health == maxHealth)
         {
             onFirstDamage?.Invoke();
-            PlayRandomDamageReplic();
         }
         base.GetDamage(damage);
+        if (Health > 0)
+        {
+            PlayRandomDamageReplic();
+        }
     }
 
     public override void Death()
@@ -39,11 +42,12 @@ public class VIP : AliveController
 
     private void PlayRandomDamageReplic()
     {
-        replicDispether.ClearList();
         if(onDamageReplicas.Count > 0)
         {
+            replicDispether.ClearList();
             int index = Random.Range(0, onDamageReplicas.Count);
             replicDispether.AddInList(new List<ReplicItem>() { onDamageReplicas[index] });
+            onDamageReplicas.RemoveAt(index);
         }
     }
 

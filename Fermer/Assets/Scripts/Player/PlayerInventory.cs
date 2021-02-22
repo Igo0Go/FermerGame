@@ -17,6 +17,7 @@ public class PlayerInventory : MonoBehaviour
         Messenger.AddListener(GameEvent.WEAPON_READY, ReturnOpportunityToChangeWeapon);
         Messenger<int>.AddListener(GameEvent.TAKE_BONUS_DAMAGE, OnTakeBonusDamage);
         Messenger.AddListener(GameEvent.RETURN_TO_DEFAULT, OnReturnToDefault);
+        Messenger.AddListener(GameEvent.START_FINAL_LOADING, HideAllWeapon);
 
       //  Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
@@ -26,8 +27,9 @@ public class PlayerInventory : MonoBehaviour
         Messenger.RemoveListener(GameEvent.WEAPON_READY, ReturnOpportunityToChangeWeapon);
         Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_DAMAGE, OnTakeBonusDamage);
         Messenger.RemoveListener(GameEvent.RETURN_TO_DEFAULT, OnReturnToDefault);
+        Messenger.RemoveListener(GameEvent.START_FINAL_LOADING, HideAllWeapon);
 
-     //   Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
+        //   Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
 
     private void Update()
@@ -121,6 +123,7 @@ public class PlayerInventory : MonoBehaviour
     {
         PlayerBonusStat.bonusPack[BonusType.Damage] = value;
     }
+    private void HideAllWeapon() => CheckWeaponForChange(-1);
 
     private void OnTriggerEnter(Collider other)
     {

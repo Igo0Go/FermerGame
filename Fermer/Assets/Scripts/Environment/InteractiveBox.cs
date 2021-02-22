@@ -18,7 +18,7 @@ public class InteractiveBox : MonoBehaviour
         }
     }
 
-    protected virtual void OnFightAction()
+    public virtual void OnFightAction()
     {
         if(loot != null)
         {

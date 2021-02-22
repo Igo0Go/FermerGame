@@ -156,12 +156,12 @@ public class Goose : Enemy //Гусь с ракетной установкой (
         if (currentShootPoint > shootPoints.Count - 1)
         {
             opportunityToShoot = -1;
-            Invoke("ReturnOpportunityToShoot", 2);
+            Invoke("ReturnOpportunityToShoot", recoilTime);
             state = EnemyState.MoveToTarget;
         }
         else
         {
-                Invoke("ShootAgain", 0.3f);
+                Invoke("ShootAgain", recoilTime);
         }
         anim.SetInteger("Shoot", 0);
     }

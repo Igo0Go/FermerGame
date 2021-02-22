@@ -16,6 +16,7 @@
     public const string START_SPRINT = "START_SPRINT";
     public const string STOP_SPRINT = "STOP_SPRINT";
     public const string PLAYER_DEAD = "PLAYER_DEAD";
+    public const string START_FINAL_LOADING = "START_FINAL_LOADING";
 
 
     public const string HIT = "HIT";

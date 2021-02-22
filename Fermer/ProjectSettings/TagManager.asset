@@ -15,6 +15,7 @@ TagManager:
   - Blade
   - Info
   - VIP
+  - InteractiveBox
   layers:
   - Default
   - TransparentFX

@@ -25,7 +25,7 @@ public class PistolBullet : Bullet //летит сквозь врагов
     {
         if (hit.collider.CompareTag("Enemy"))
         {
-            hit.collider.GetComponent<AliveController>().GetDamage(90);
+            hit.collider.GetComponent<AliveController>().GetDamage(damage);
             Messenger.Broadcast(GameEvent.HIT);
             return;
         }
@@ -38,6 +38,16 @@ public class PistolBullet : Bullet //летит сквозь врагов
                 Destroy(gameObject);
                 return;
             }
+        }
+        else if(playerReact && hit.collider.CompareTag("Player"))
+        {
+            hit.collider.GetComponent<PlayerCharacter>().OnTakeDamageFromDirection(transform.position);
+            hit.collider.GetComponent<AliveController>().GetDamage(damage);
+        }
+        else if (hit.collider.CompareTag("InteractiveBox"))
+        {
+            hit.collider.GetComponent<InteractiveBox>().OnFightAction();
+            Messenger.Broadcast(GameEvent.HIT);
         }
         else
         {
@@ -54,7 +64,7 @@ public class PistolBullet : Bullet //летит сквозь врагов
     {
         if (hit.collider.CompareTag("Enemy"))
         {
-            hit.collider.GetComponent<AliveController>().Death();
+            hit.collider.GetComponent<AliveController>().GetDamage(90);
             Messenger.Broadcast(GameEvent.HIT);
             return;
         }
@@ -66,6 +76,16 @@ public class PistolBullet : Bullet //летит сквозь врагов
                 Messenger.Broadcast(GameEvent.HIT);
                 return;
             }
+        }
+        else if (playerReact && hit.collider.CompareTag("Player"))
+        {
+            hit.collider.GetComponent<PlayerCharacter>().OnTakeDamageFromDirection(transform.position);
+            hit.collider.GetComponent<AliveController>().GetDamage(damage);
+        }
+        else if (hit.collider.CompareTag("InteractiveBox"))
+        {
+            hit.collider.GetComponent<InteractiveBox>().OnFightAction();
+            Messenger.Broadcast(GameEvent.HIT);
         }
     }
 }

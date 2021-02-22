@@ -9,17 +9,21 @@ public class PlayerCharacter : AliveController
     [SerializeField] private AudioClip sprintClip;
 
     private AudioSource source;
+    private bool opportunityToDead;
 
     private void Awake()
     {
         Messenger<int>.AddListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulnerable);
         Messenger.AddListener(GameEvent.SPRINT_ACTION, PlaySprintSound);
+        Messenger.AddListener(GameEvent.START_FINAL_LOADING, SetUpToFinalLoading);
+        opportunityToDead = true;
         //   Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
     private void OnDestroy()
     {
         Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulnerable);
         Messenger.RemoveListener(GameEvent.SPRINT_ACTION, PlaySprintSound);
+        Messenger.RemoveListener(GameEvent.START_FINAL_LOADING, SetUpToFinalLoading);
         //    Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
 
@@ -39,7 +43,7 @@ public class PlayerCharacter : AliveController
 
     public override void GetDamage(int damage)
     {
-        if(PlayerBonusStat.bonusPack[BonusType.Invulnerable]==1)
+        if(PlayerBonusStat.bonusPack[BonusType.Invulnerable]==1 && opportunityToDead)
         {
             source.PlayOneShot(damageClips[Random.Range(0, damageClips.Count)]);
             base.GetDamage(damage);
@@ -96,6 +100,12 @@ public class PlayerCharacter : AliveController
     public override void Death()
     {
         Messenger.Broadcast(GameEvent.PLAYER_DEAD);
+    }
+
+    private void SetUpToFinalLoading()
+    {
+        Destroy(gameObject, 7);
+        opportunityToDead = false;
     }
 
     private void OnTriggerEnter(Collider other)

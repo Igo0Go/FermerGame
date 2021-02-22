@@ -129,7 +129,10 @@ MonoBehaviour:
   decal: {fileID: 8576529099985679603, guid: 0a5f4df0979427b4e8644b4045570801, type: 3}
   speed: 0
   damage: 0
-  playerReact: 1
+  playerReact: 0
+  ignoreMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1001 &5043933099963875429
 PrefabInstance:
   m_ObjectHideFlags: 0

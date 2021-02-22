@@ -43,6 +43,8 @@ public class UIDispetcher : MonoBehaviour
     [SerializeField, Range(1, 120)] private float damageBonusTime = 60;
     [SerializeField, Range(1, 120)] private float invilnirableBonusTime = 60;
 
+    [SerializeField] private Image blackPanel;
+
     private bool opportunityToShowSettings = true;
     private int score;
     private float scoreReturnTime;
@@ -67,6 +69,7 @@ public class UIDispetcher : MonoBehaviour
         Messenger<Vector3>.AddListener(GameEvent.START_SPRINT, EnebleSprintEffect);
         Messenger.AddListener(GameEvent.STOP_SPRINT, DisableAllSprintEffects);
         Messenger.AddListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
+        Messenger.AddListener(GameEvent.START_FINAL_LOADING, StartBlackPanelCoroutine);
 
         //Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
@@ -89,6 +92,7 @@ public class UIDispetcher : MonoBehaviour
         Messenger.RemoveListener(GameEvent.STOP_SPRINT, DisableAllSprintEffects);
 
         Messenger.RemoveListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
+        Messenger.RemoveListener(GameEvent.START_FINAL_LOADING, StartBlackPanelCoroutine);
         //Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
 
@@ -225,6 +229,25 @@ public class UIDispetcher : MonoBehaviour
         OnVoiceValueChanged();
 
         opportunityToShowSettings = true;
+    }
+
+    private void StartBlackPanelCoroutine()
+    {
+        Destroy(gameObject, 7);
+        blackPanel.gameObject.SetActive(true);
+        StartCoroutine(BlackPanelCoroutine());
+    }
+
+    private IEnumerator BlackPanelCoroutine()
+    {
+        Color bufer = blackPanel.color;
+        float t = 0;
+        while(blackPanel.color.a < 255)
+        {
+            t += Time.deltaTime / 5;
+            blackPanel.color = Color.Lerp(bufer, Color.black, t);
+            yield return null;
+        }
     }
 
     private void OnNextWave(int number)

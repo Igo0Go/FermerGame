@@ -24,6 +24,7 @@ public class InputMove : MonoBehaviour
     private bool inMenu;
     private bool startup;
     private bool fall;
+    private float fallTimer;
 
     void Awake()
     {
@@ -79,7 +80,9 @@ public class InputMove : MonoBehaviour
     private void Jump()
     {
         if (charController.isGrounded)
-        { 
+        {
+            fallTimer = 0;
+            fall = true;
             if (Input.GetButtonDown("Jump"))
             {
                 vertSpeed = jumpForce;
@@ -91,7 +94,7 @@ public class InputMove : MonoBehaviour
         }
         else
         {
-            if(fall)
+            if (fall)
             {
                 vertSpeed -= gravity * 5 / PlayerBonusStat.bonusPack[BonusType.Jump] * Time.deltaTime;
                 if (vertSpeed < terminalVelocity)
@@ -101,9 +104,14 @@ public class InputMove : MonoBehaviour
             }
             else
             {
+                fallTimer -= Time.deltaTime;
+                if(fallTimer <= 0)
+                {
+                    fallTimer = 0;
+                    fall = true;
+                }
                 vertSpeed = 0;
             }
-           
         }
     }
     private void PlayerMove()
@@ -124,14 +132,15 @@ public class InputMove : MonoBehaviour
     }
     private void PlayerSprint()
     {
-        if(Input.GetKeyDown(KeyCode.LeftShift) && horSpeed.magnitude != 0)
+        if(Input.GetKeyDown(KeyCode.LeftShift) && horSpeed.magnitude != 0 && sprintMultiplicatorBufer == 1)
         {
             if(sprintCount > 0)
             {
                 fall = false;
+                fallTimer += sprintTime + 0.1f;
                 sprintMultiplicatorBufer = sprintMultiplicator;
                 Invoke("ReturnSprintOpportunity", sprintTime);
-                Invoke("ReturnFall", sprintTime + 0.1f);
+                Invoke("StopSprint", sprintTime + 0.1f);
                 sprintCount--;
                 currentSprintReloadTime = sprintReloadTime;
                 Messenger<int>.Broadcast(GameEvent.CHANGE_SPRINT_COUNT, sprintCount);
@@ -151,7 +160,6 @@ public class InputMove : MonoBehaviour
             }
         }
     }
-   
 
     private void OnPause(bool pause)
     {
@@ -161,9 +169,8 @@ public class InputMove : MonoBehaviour
     #region Вызовы Invoke
     private void StopStartup() => startup = false;
     private void ReturnSprintOpportunity()=> sprintMultiplicatorBufer = 1;
-    private void ReturnFall()
+    private void StopSprint()
     {
-        fall = true;
         Messenger.Broadcast(GameEvent.STOP_SPRINT);
     }
     #endregion

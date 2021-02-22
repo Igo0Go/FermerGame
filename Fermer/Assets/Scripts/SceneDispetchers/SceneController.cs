@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public static class SavedObjects
 {
@@ -27,10 +28,13 @@ public class SceneController : MonoBehaviour
     public List<ReplicPointScript> replicPoints;
 
     [SerializeField] private List<GameObject> alarmBots;
+    [SerializeField] private AudioClip alarmMusic;
+    [SerializeField] private ReplicItem alarmFinalReplica;
     [SerializeField] private List<TranslateScript> movingCubes;
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private Transform pointer;
     [SerializeField] private ArenaController arenaController;
+    [SerializeField] private GameObject transitCamera;
 
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
@@ -66,6 +70,12 @@ public class SceneController : MonoBehaviour
         {
             currentWave.Add(Instantiate(item, randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
         }
+        if (musicSource.isPlaying)
+        {
+            musicSource.Stop();
+        }
+        musicSource.clip = alarmMusic;
+        musicSource.Play();
     }
 
     private void NextWave()
@@ -236,21 +246,41 @@ public class SceneController : MonoBehaviour
                     else
                         RandomWave();
                 }
+                else
+                {
+                    opportunityToCheck = false;
+                    FinalAlarm();
+                }
             }
         }
     }
     private void ReturnOpportunityToCheck() => opportunityToCheck = true;
     private void NextMusic()
     {
-        if (musicSource.isPlaying)
+        if(!alarm)
         {
-            musicSource.Stop();
+            if (musicSource.isPlaying)
+            {
+                musicSource.Stop();
+            }
+            currentMusicIndex++;
+            if (currentMusicIndex >= randomMusic.Count) currentMusicIndex = 0;
+            musicSource.clip = randomMusic[currentMusicIndex];
+            musicSource.Play();
+            Invoke("NextMusic", musicSource.clip.length + 1);
         }
-        currentMusicIndex++;
-        if (currentMusicIndex >= randomMusic.Count) currentMusicIndex = 0;
-        musicSource.clip = randomMusic[currentMusicIndex];
-        musicSource.Play();
-        Invoke("NextMusic", musicSource.clip.length + 1);
+    }
+
+    private void FinalAlarm()
+    {
+        replicDispether.AddInList(new List<ReplicItem>() { alarmFinalReplica});
+        Messenger.Broadcast(GameEvent.START_FINAL_LOADING);
+        Invoke("LoadFinalScene", 4);
+    }
+    private void LoadFinalScene()
+    {
+        SceneManager.LoadScene(1);
+        transitCamera.SetActive(true);
     }
 
     private void RayToLast()
@@ -284,13 +314,13 @@ public class SceneController : MonoBehaviour
             audioClips = new List<AudioClip>();
 
             DirectoryInfo di = new DirectoryInfo(musicFolderPath);
-            FileInfo[] UserFiles = di.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
+            FileInfo[] UserFiles = di.GetFiles("*.ogg", SearchOption.TopDirectoryOnly);
             if (UserFiles.Length > 0)// если массив не пуст
             {
                 for (int i = 0; i < UserFiles.Length; i++)
                 {
                     WWW www = new WWW(Path.Combine(musicFolderPath, UserFiles[i].Name));
-                    AudioClip clip = www.GetAudioClip(false, true, AudioType.MPEG);
+                    AudioClip clip = www.GetAudioClip(false, true, AudioType.OGGVORBIS);
                     audioClips.Add(clip);
                 }
             }

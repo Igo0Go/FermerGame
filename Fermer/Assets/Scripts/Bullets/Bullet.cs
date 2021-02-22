@@ -62,18 +62,23 @@ public class Bullet : MonoBehaviour //уничтожается при перво
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
             Messenger.Broadcast(GameEvent.HIT);
         }
-        if(hit.collider.CompareTag("Player"))
+        else if(hit.collider.CompareTag("Player"))
         {
             hit.collider.GetComponent<PlayerCharacter>().OnTakeDamageFromDirection(transform.position);
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
         }
-        if(hit.collider.CompareTag("Bullet"))
+        else if(hit.collider.CompareTag("Bullet"))
         {
             if(hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
             {
                 bullet.Explosion();
                 Messenger.Broadcast(GameEvent.HIT);
             }
+        }
+        else if (hit.collider.CompareTag("InteractiveBox"))
+        {
+            hit.collider.GetComponent<InteractiveBox>().OnFightAction();
+                Messenger.Broadcast(GameEvent.HIT);
         }
 
         Destroy(gameObject);
@@ -86,13 +91,18 @@ public class Bullet : MonoBehaviour //уничтожается при перво
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
             Messenger.Broadcast(GameEvent.HIT);
         }
-        if (hit.collider.CompareTag("Bullet"))
+        else if (hit.collider.CompareTag("Bullet"))
         {
             if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
             {
                 bullet.Explosion();
                 Messenger.Broadcast(GameEvent.HIT);
             }
+        }
+        else if (hit.collider.CompareTag("InteractiveBox"))
+        {
+            hit.collider.GetComponent<InteractiveBox>().OnFightAction();
+            Messenger.Broadcast(GameEvent.HIT);
         }
 
         GameObject obj = Instantiate(decal);
