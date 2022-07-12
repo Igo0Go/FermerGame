@@ -229,6 +229,8 @@ public class UIDispetcher : MonoBehaviour
         OnVoiceValueChanged();
 
         opportunityToShowSettings = true;
+
+        ConsoleEventCenter.ShowConsoleChanged.AddListener(SetPauseValue);
     }
 
     private void StartBlackPanelCoroutine()
@@ -434,12 +436,12 @@ public class UIDispetcher : MonoBehaviour
 
     public void SettingsPanelToggle()
     {
+        if (ConsoleEventCenter.ShowConsole)
+            return;
+
         bool inMenu = !settingsPanel.activeSelf;
         settingsPanel.SetActive(inMenu);
-        Cursor.visible = inMenu;
-        Cursor.lockState = inMenu ? CursorLockMode.None : CursorLockMode.Locked;
-        Time.timeScale = inMenu ? 0 : 1;
-        Messenger<bool>.Broadcast(GameEvent.PAUSE, inMenu);
+        SetPauseValue(inMenu);
     }
     public void Restart()
     {
@@ -466,7 +468,7 @@ public class UIDispetcher : MonoBehaviour
         }
         return false;
     }
-
+    
     private void OnLoad()
     {
         musicVolumeSlider.value = PlayerPrefs.GetFloat("Music", 0.5f);
@@ -539,6 +541,14 @@ public class UIDispetcher : MonoBehaviour
                 invilnvurableBonusSlider.value -= Time.deltaTime;
             }
         }
+    }
+
+    private void SetPauseValue(bool value)
+    {
+        Cursor.visible = value;
+        Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
+        Time.timeScale = value ? 0 : 1;
+        Messenger<bool>.Broadcast(GameEvent.PAUSE, value);
     }
 
     private void ReturnHitMarker()
