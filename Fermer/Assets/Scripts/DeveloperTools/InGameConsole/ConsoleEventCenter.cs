@@ -24,5 +24,21 @@ public static class ConsoleEventCenter
     public static void Reload()
     {
         ShowConsoleChanged = new UnityEvent<bool>();
+
+        Help = new DebugCommand("help", "show command list on screen", "help");
+
+        commandList = new List<BaseDebugCommand>()
+        {
+            Help
+        };
     }
+
+
+    #region Commands
+
+    public static List<BaseDebugCommand> commandList;
+
+    public static DebugCommand Help;
+
+    #endregion
 }
