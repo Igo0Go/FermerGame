@@ -16,23 +16,20 @@ public class ReplicPointScript : MonoBehaviour
 
     private void Start()
     {
-        Invoke("ToStart", 1);
+        StartCoroutine(ToStart());
     }
 
     public void PlayReplicas()
     {
         GetComponent<BoxCollider>().enabled = false;
         replicDispether.AddInList(replicas);
+        replicDispether.replicasEnd.AddListener(OnReplicasEnd);
+    }
 
-        float delayTime = 0;
-
-        foreach (var item in replicas)
-        {
-            delayTime += item.clip.length;
-        }
-        delayTime += 2;
-        Invoke("UseCubes", delayTime);
-        Destroy(gameObject, delayTime + 1);
+    private void OnReplicasEnd()
+    {
+        UseCubes();
+        Destroy(gameObject, 2);
     }
 
     private void UseCubes()
@@ -42,8 +39,9 @@ public class ReplicPointScript : MonoBehaviour
             item.ChangePosition();
         }
     }
-    private void ToStart()
+    private IEnumerator ToStart()
     {
+        yield return new WaitForSeconds(1);
         GetComponent<BoxCollider>().enabled = true;
     }
 }
