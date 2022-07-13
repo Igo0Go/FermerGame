@@ -44,6 +44,14 @@ public class ReplicDispether : MonoBehaviour
         if(bufer == null)
             StartCoroutine(CheckReplicas(0));
     }
+    public void StopAll()
+    {
+        source.Stop();
+        StopAllCoroutines();
+        bufer = null;
+        ClearList();
+        replicPanel.SetActive(false);
+    }
     public IEnumerator CheckReplicas(float time)
     {
         yield return new WaitForSeconds(time);
