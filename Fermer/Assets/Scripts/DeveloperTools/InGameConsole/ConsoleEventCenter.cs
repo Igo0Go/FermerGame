@@ -25,11 +25,49 @@ public static class ConsoleEventCenter
     {
         ShowConsoleChanged = new UnityEvent<bool>();
 
-        Help = new DebugCommand("help", "show command list on screen", "help");
+        Help = new DebugCommand("help", "показывает список доступных команд", "help");
+
+        ClearAllBonuses = new DebugCommand("clear_all_bonuses", "убирает эффекты всех бонусов", "clear_all_bonuses");
+        ClearAllBonuses.Execute.AddListener(() =>
+        {
+            Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_JUMP, 1);
+            Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_SPEED, 1);
+            Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_DAMAGE, 1);
+            Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_INVULNERABLE, 1);
+        }
+        );
+
+        GetBonusForEver = new DebugCommand<string>("get_bonus", "получить на неограниченное врем€ эффект бонуса bonus " +
+            "(jump - усиленный прыжок, " +
+            "speed - увеличенна€ скорость, " +
+            "damage - увеличенный урон, " +
+            "invulnerability - неу€звимость",
+            "get_bonus bonus");
+        GetBonusForEver.Execute.AddListener((bonusType) =>
+        {
+            if (bonusType.Equals("jump"))
+            {
+                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_JUMP, 3);
+            }
+            else if (bonusType.Equals("speed"))
+            {
+                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_SPEED, 3);
+            }
+            else if (bonusType.Equals("damage"))
+            {
+                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_DAMAGE, 3);
+            }
+            else if (bonusType.Equals("invulnerability"))
+            {
+                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_INVULNERABLE, 3);
+            }
+        });
 
         commandList = new List<BaseDebugCommand>()
         {
-            Help
+            Help,
+            ClearAllBonuses,
+            GetBonusForEver
         };
     }
 
@@ -39,6 +77,10 @@ public static class ConsoleEventCenter
     public static List<BaseDebugCommand> commandList;
 
     public static DebugCommand Help;
+
+    public static DebugCommand ClearAllBonuses;
+
+    public static DebugCommand<string> GetBonusForEver;
 
     #endregion
 }

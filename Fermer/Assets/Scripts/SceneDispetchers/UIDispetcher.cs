@@ -82,9 +82,9 @@ public class UIDispetcher : MonoBehaviour
         Messenger<float>.RemoveListener(GameEvent.CHANGE_MAX_HEALTH, OnChangeMaxHealth);
 
         Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_JUMP, OnTakeBonusJump);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_SPEED, OnTakeBonusJump);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_DAMAGE, OnTakeBonusJump);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusJump);
+        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_SPEED, OnTakeBonusSpeed);
+        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_DAMAGE, OnTakeBonusDamage);
+        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulrable);
         Messenger<int>.RemoveListener(GameEvent.NEXT_WAVE, OnNextWave);
         Messenger<int>.RemoveListener(GameEvent.DAMAGE_MARKER_ACTIVATE, OnDamageMarkerActivate);
 
@@ -500,7 +500,7 @@ public class UIDispetcher : MonoBehaviour
                 jumpBonusSlider.value = 0;
                 Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_JUMP, 1);
             }
-            else
+            else if(PlayerBonusStat.bonusPack[BonusType.Jump] < 3)
             {
                 jumpBonusSlider.value -= Time.deltaTime;
             }
@@ -512,7 +512,7 @@ public class UIDispetcher : MonoBehaviour
                 speedBonusSlider.value = 0;
                 Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_SPEED, 1);
             }
-            else
+            else if (PlayerBonusStat.bonusPack[BonusType.Speed] < 3)
             {
                 speedBonusSlider.value -= Time.deltaTime;
             }
@@ -524,7 +524,7 @@ public class UIDispetcher : MonoBehaviour
                 damageBonusSlider.value = 0;
                 Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_DAMAGE, 1);
             }
-            else
+            else if (PlayerBonusStat.bonusPack[BonusType.Damage] < 3)
             {
                 damageBonusSlider.value -= Time.deltaTime;
             }
@@ -536,7 +536,7 @@ public class UIDispetcher : MonoBehaviour
                 invilnvurableBonusSlider.value = 0;
                 Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_INVULNERABLE, 1);
             }
-            else
+            else if (PlayerBonusStat.bonusPack[BonusType.Invulnerable] < 3)
             {
                 invilnvurableBonusSlider.value -= Time.deltaTime;
             }

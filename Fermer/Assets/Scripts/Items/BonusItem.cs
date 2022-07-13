@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class BonusItem : GameItem //разные бонусы
+﻿public class BonusItem : GameItem //разные бонусы
 {
     public BonusType type;
 

@@ -82,13 +82,13 @@ public class InGameConsole : MonoBehaviour
 
     private void HandleInput()
     {
-        string[] properties = input.Split(' ');
+        string[] properties = input.TrimEnd('\n').Split(' ');
 
         for (int i = 0; i < ConsoleEventCenter.commandList.Count; i++)
         {
             BaseDebugCommand baseCommand = ConsoleEventCenter.commandList[i];
 
-            if (input.Contains(baseCommand.CommandId))
+            if (properties[0].Contains(baseCommand.CommandId))
             {
                 if (baseCommand is DebugCommand command)
                 {
@@ -96,7 +96,11 @@ public class InGameConsole : MonoBehaviour
                 }
                 else if (baseCommand is DebugCommand<int> intCommand)
                 {
-                    intCommand.Invoke(int.Parse(properties[i]));
+                    intCommand.Invoke(int.Parse(properties[1]));
+                }
+                else if (baseCommand is DebugCommand<string> stringCommand)
+                {
+                    stringCommand.Invoke(properties[1]);
                 }
             }
         }
