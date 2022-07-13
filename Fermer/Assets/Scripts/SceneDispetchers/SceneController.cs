@@ -185,6 +185,9 @@ public class SceneController : MonoBehaviour
 
     private void Setup()
     {
+        ConsoleEventCenter.TeleportToArena.Execute.AddListener(OnTpToArena);
+
+
         controlMovingCubes = true;
         currentWaveNumber = -1;
 
@@ -331,6 +334,13 @@ public class SceneController : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    private void OnTpToArena()
+    {
+        SavedObjects.toArena = true;
+        SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena ? 1 : 0]);
+        replicDispether.StopAll();
     }
 
     [SerializeField] private GameObject player;

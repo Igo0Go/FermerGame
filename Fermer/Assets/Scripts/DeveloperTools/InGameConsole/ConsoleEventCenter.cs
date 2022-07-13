@@ -63,11 +63,14 @@ public static class ConsoleEventCenter
             }
         });
 
+        TeleportToArena = new DebugCommand("tp_to_arena", "пропустить обучение и телепортироваться к арене", "tp_to_arena");
+
         commandList = new List<BaseDebugCommand>()
         {
             Help,
             ClearAllBonuses,
-            GetBonusForEver
+            GetBonusForEver,
+            TeleportToArena
         };
     }
 
@@ -79,6 +82,8 @@ public static class ConsoleEventCenter
     public static DebugCommand Help;
 
     public static DebugCommand ClearAllBonuses;
+
+    public static DebugCommand TeleportToArena;
 
     public static DebugCommand<string> GetBonusForEver;
 
