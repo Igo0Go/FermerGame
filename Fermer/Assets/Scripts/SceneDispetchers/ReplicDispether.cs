@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(AudioSource))]
 public class ReplicDispether : MonoBehaviour
@@ -11,9 +12,26 @@ public class ReplicDispether : MonoBehaviour
     [SerializeField] private Text replicText;
     [SerializeField] private Toggle useTextToggle;
 
+    [HideInInspector]
+    public UnityEvent replicasEnd;
+
     private List<ReplicItem> replicas;
     private AudioSource source;
     private ReplicItem bufer;
+
+    private void Awake()
+    {
+        replicasEnd = new UnityEvent();
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            if(bufer != null)
+                StopAll();
+        }
+    }
 
     public void OnToggleChanged()
     {
@@ -27,7 +45,6 @@ public class ReplicDispether : MonoBehaviour
             }
         }
     }
-
     public void Setup()
     {
         replicas = new List<ReplicItem>();
@@ -50,6 +67,8 @@ public class ReplicDispether : MonoBehaviour
         StopAllCoroutines();
         bufer = null;
         ClearList();
+        replicasEnd?.Invoke();
+        replicasEnd = new UnityEvent();
         replicPanel.SetActive(false);
     }
     public IEnumerator CheckReplicas(float time)
@@ -61,6 +80,8 @@ public class ReplicDispether : MonoBehaviour
             StartReplica();
         else
         {
+            replicasEnd?.Invoke();
+            replicasEnd = new UnityEvent();
             bufer = null;
         }
     }
