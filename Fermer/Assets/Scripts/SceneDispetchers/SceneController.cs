@@ -186,7 +186,7 @@ public class SceneController : MonoBehaviour
     private void Setup()
     {
         ConsoleEventCenter.TeleportToArena.Execute.AddListener(OnTpToArena);
-
+        ConsoleEventCenter.KillWave.Execute.AddListener(OnSkipWave);
 
         controlMovingCubes = true;
         currentWaveNumber = -1;
@@ -341,6 +341,25 @@ public class SceneController : MonoBehaviour
         SavedObjects.toArena = true;
         SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena ? 1 : 0]);
         replicDispether.StopAll();
+    }
+    private void OnSkipWave()
+    {
+        if(currentWaveNumber >= 0)
+        {
+            replicDispether.StopAll();
+            for (int i = 0; i < currentWave.Count; i++)
+            {
+                currentWave[i]?.GetComponent<Enemy>().Death();
+            }
+            currentWave.Clear();
+            StartCoroutine(DelayedMethod(3, ()=> { opportunityToCheck = true; }));
+        }
+    }
+
+    private IEnumerator DelayedMethod(float delay, Action method)
+    {
+        yield return new WaitForSeconds(delay);
+        method?.Invoke();
     }
 
     [SerializeField] private GameObject player;

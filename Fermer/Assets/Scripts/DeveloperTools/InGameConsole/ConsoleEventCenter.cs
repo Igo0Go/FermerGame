@@ -65,12 +65,15 @@ public static class ConsoleEventCenter
 
         TeleportToArena = new DebugCommand("tp_to_arena", "пропустить обучение и телепортироваться к арене", "tp_to_arena");
 
+        KillWave = new DebugCommand("kill_wave", "если идёт волна, убивает всех врагов", "kill_wave");
+
         commandList = new List<BaseDebugCommand>()
         {
             Help,
             ClearAllBonuses,
             GetBonusForEver,
-            TeleportToArena
+            TeleportToArena,
+            KillWave
         };
     }
 
@@ -81,11 +84,13 @@ public static class ConsoleEventCenter
 
     public static DebugCommand Help;
 
+    public static DebugCommand<string> GetBonusForEver;
+
     public static DebugCommand ClearAllBonuses;
 
     public static DebugCommand TeleportToArena;
 
-    public static DebugCommand<string> GetBonusForEver;
+    public static DebugCommand KillWave;
 
     #endregion
 }
