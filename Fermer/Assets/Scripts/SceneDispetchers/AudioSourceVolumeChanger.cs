@@ -23,35 +23,16 @@ public class AudioSourceVolumeChanger : MonoBehaviour
         switch (type)
         {
             case AudioSourceChangerType.Music:
-                Messenger<float>.AddListener(GameEvent.MUSIC_CHANGED, ChangeVolume);
+                GameController.MUSIC_CHANGED.AddListener(ChangeVolume);
                 break;
             case AudioSourceChangerType.Sound:
-                Messenger<float>.AddListener(GameEvent.SOUNDS_CHANGED, ChangeVolume);
+                GameController.SOUNDS_CHANGED.AddListener(ChangeVolume);
                 break;
             case AudioSourceChangerType.Voice:
-                Messenger<float>.AddListener(GameEvent.VOICE_CHANGED, ChangeVolume);
-                Messenger<bool>.AddListener(GameEvent.PAUSE, OnPause);
-                break;
-
-        }
-     //   Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
-    }
-    private void OnDestroy()
-    {
-        switch (type)
-        {
-            case AudioSourceChangerType.Music:
-                Messenger<float>.RemoveListener(GameEvent.MUSIC_CHANGED, ChangeVolume);
-                break;
-            case AudioSourceChangerType.Sound:
-                Messenger<float>.RemoveListener(GameEvent.SOUNDS_CHANGED, ChangeVolume);
-                break;
-            case AudioSourceChangerType.Voice:
-                Messenger<float>.RemoveListener(GameEvent.VOICE_CHANGED, ChangeVolume);
-                Messenger<bool>.RemoveListener(GameEvent.PAUSE, OnPause);
+                GameController.VOICE_CHANGED.AddListener(ChangeVolume);
+                GameController.PAUSE.AddListener(OnPause);
                 break;
         }
-       // Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
 
     private void Start()

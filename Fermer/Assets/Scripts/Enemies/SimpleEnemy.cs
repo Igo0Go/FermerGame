@@ -30,12 +30,12 @@ public abstract class Enemy : AliveController
 
     protected virtual void OnFightAction()
     {
-        Messenger<int>.Broadcast(GameEvent.ENEMY_HIT, scoreForWin);
+        GameController.ENEMY_HIT.Invoke(scoreForWin);
         Vector3 dir = new Vector3(Random.Range(-0.05f, 0.05f), 2, Random.Range(-0.05f, 0.05f));
         Instantiate(afterFightLoot, transform.position + dir, Quaternion.identity).GetComponent<Rigidbody>()
             .AddForce(dir, ForceMode.Impulse);
         Instantiate(postDeadDecal, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
-        Messenger.Broadcast(GameEvent.ENEMY_DEAD);
+        GameController.ENEMY_DEAD.Invoke();
         Destroy(gameObject);
     }
 
@@ -43,7 +43,7 @@ public abstract class Enemy : AliveController
     {
         if(other.CompareTag("Bullet"))
         {
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
             GetDamage(other.GetComponent<Bullet>().damage);
         }
         else if(other.CompareTag("Fire"))
@@ -60,7 +60,7 @@ public abstract class Enemy : AliveController
 
                 Vector3 dir = other.transform.position - (transform.position + Vector3.up);
                 rb.AddForce(dir.normalized * zone.force, ForceMode.Impulse);
-                Invoke("ReturnRB", 1);
+                Invoke(nameof(ReturnRB), 1);
                 GetDamage(zone.damage);
             }
         }
@@ -74,7 +74,7 @@ public abstract class Enemy : AliveController
         }
         else if (other.CompareTag("Blade"))
         {
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
             OnFightAction();
         }
     }
@@ -88,7 +88,7 @@ public abstract class Enemy : AliveController
 
     public override void Death()
     {
-        Messenger<int>.Broadcast(GameEvent.ENEMY_HIT, scoreForWin);
+        GameController.ENEMY_HIT.Invoke(scoreForWin);
         int cycleCount = Random.Range(0, 3);
 
         if (cycleCount > lootPrefabs.Count)
@@ -103,7 +103,7 @@ public abstract class Enemy : AliveController
             cycleCount--;
         }
         Instantiate(postDeadDecal, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
-        Messenger.Broadcast(GameEvent.ENEMY_DEAD);
+        GameController.ENEMY_DEAD.Invoke();
         Destroy(gameObject);
     }
     private void ReturnRB()
@@ -133,8 +133,7 @@ public class SimpleEnemy : Enemy
     public virtual void RayShoot()
     {
         Ray ray = new Ray(transform.position, transform.forward);
-        RaycastHit hit;
-        if (Physics.SphereCast(ray, 2, out hit))
+        if (Physics.SphereCast(ray, 2, out RaycastHit hit))
         {
 
             GameObject hitObject = hit.transform.gameObject;
@@ -142,11 +141,11 @@ public class SimpleEnemy : Enemy
             {
                 if (!recoil)
                 {
-                    shootPoint.LookAt(hitObject.transform.position + Vector3.up);   
+                    shootPoint.LookAt(hitObject.transform.position + Vector3.up);
                     GameObject currentBullet = Instantiate(bulletPrefab, shootPoint.position, shootPoint.rotation) as GameObject;
                     currentBullet.GetComponent<Bullet>().Init(50, 5, damage, ignoreMask);
                     recoil = true;
-                    Invoke("StopRecoil", 1);
+                    Invoke(nameof(StopRecoil), 1);
                 }
             }
             else if (hit.distance < obstacleRange)

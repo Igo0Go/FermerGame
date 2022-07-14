@@ -28,7 +28,7 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
         {
             //AliveController character = hit.collider.GetComponent<AliveController>();
             //character.GetDamage(damage);
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
         else if(hit.collider.CompareTag("Player"))
         {
@@ -37,7 +37,7 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
         else if(hit.collider.CompareTag("VIP"))
         {
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
 
         GameObject obj = Instantiate(decal);

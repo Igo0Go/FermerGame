@@ -45,7 +45,7 @@ public class SceneController : MonoBehaviour
     private bool controlMovingCubes;
     private bool alarm;
 
-    private string musicFolderPath = Path.Combine(Application.streamingAssetsPath, "Music");
+    private readonly string musicFolderPath = Path.Combine(Application.streamingAssetsPath, "Music");
 
     public void NoMovingCubesControl() => controlMovingCubes = false;
 
@@ -90,7 +90,7 @@ public class SceneController : MonoBehaviour
             }
         }
         currentWave = new List<GameObject>();
-        Messenger<int>.Broadcast(GameEvent.NEXT_WAVE, currentWaveNumber);
+        GameController.NEXT_WAVE.Invoke(currentWaveNumber);
         foreach (var item in waves[currentWaveNumber].bots)
         {
             currentWave.Add(Instantiate(item, randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
@@ -116,15 +116,15 @@ public class SceneController : MonoBehaviour
                 item.ToDefaultPos();
             }
         }
-        Invoke("SetPolygone", 5);
-        Invoke("ReturnOpportunityToCheck", replicasTime + 5);
+        Invoke(nameof(SetPolygone), 5);
+        Invoke(nameof(ReturnOpportunityToCheck), replicasTime + 5);
     }
 
     private void RandomWave()
     {
         currentWaveNumber++;
         currentWave = new List<GameObject>();
-        Messenger<int>.Broadcast(GameEvent.NEXT_WAVE, currentWaveNumber);
+        GameController.NEXT_WAVE.Invoke(currentWaveNumber);
         foreach (var item in randomBots)
         {
             currentWave.Add(Instantiate(item, randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
@@ -151,7 +151,7 @@ public class SceneController : MonoBehaviour
 
         List<ReplicItem> currentRandomReplic = new List<ReplicItem>() { randomReplic[UnityEngine.Random.Range(0, randomReplic.Count)] };
         replicDispether.AddInList(currentRandomReplic);
-        Invoke("ReturnOpportunityToCheck", currentRandomReplic[0].clip.length + 5);
+        Invoke(nameof(ReturnOpportunityToCheck), currentRandomReplic[0].clip.length + 5);
     }
 
     private void SetPolygone()
@@ -167,11 +167,8 @@ public class SceneController : MonoBehaviour
 
     private void Awake()
     {
-        Messenger.AddListener(GameEvent.EXIT_LEVEL, Setup);
-    }
-    private void OnDestroy()
-    {
-        Messenger.RemoveListener(GameEvent.EXIT_LEVEL, Setup);
+        GameController.Init();
+        GameController.EXIT_LEVEL.AddListener(Setup);
     }
 
     private void Start()
@@ -270,15 +267,15 @@ public class SceneController : MonoBehaviour
             if (currentMusicIndex >= randomMusic.Count) currentMusicIndex = 0;
             musicSource.clip = randomMusic[currentMusicIndex];
             musicSource.Play();
-            Invoke("NextMusic", musicSource.clip.length + 1);
+            Invoke(nameof(NextMusic), musicSource.clip.length + 1);
         }
     }
 
     private void FinalAlarm()
     {
         replicDispether.AddInList(new List<ReplicItem>() { alarmFinalReplica});
-        Messenger.Broadcast(GameEvent.START_FINAL_LOADING);
-        Invoke("LoadFinalScene", 4);
+        GameController.START_FINAL_LOADING.Invoke();
+        Invoke(nameof(LoadFinalScene), 4);
     }
     private void LoadFinalScene()
     {
@@ -349,7 +346,10 @@ public class SceneController : MonoBehaviour
             replicDispether.StopAll();
             for (int i = 0; i < currentWave.Count; i++)
             {
-                currentWave[i]?.GetComponent<Enemy>().Death();
+                if(currentWave[i] != null)
+                {
+                    currentWave[i].GetComponent<Enemy>().Death();
+                }
             }
             currentWave.Clear();
             StartCoroutine(DelayedMethod(3, ()=> { opportunityToCheck = true; }));

@@ -21,16 +21,10 @@ public class MouseLock : MonoBehaviour
 
     void Awake()
     {
-        Messenger<bool>.AddListener(GameEvent.PAUSE, OnPause);
-        Messenger<float>.AddListener(GameEvent.MOUSE_CHANGED, OnChangeMouse);
-        // Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
+        GameController.PAUSE.AddListener(OnPause);
+        GameController.MOUSE_CHANGED.AddListener(OnChangeMouse);
     }
-    void OnDestroy()
-    {
-        Messenger<bool>.RemoveListener(GameEvent.PAUSE, OnPause);
-        Messenger<float>.RemoveListener(GameEvent.MOUSE_CHANGED, OnChangeMouse);
-        // Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
-    }
+
 
     void Start() {
         Rigidbody body = GetComponent<Rigidbody>();

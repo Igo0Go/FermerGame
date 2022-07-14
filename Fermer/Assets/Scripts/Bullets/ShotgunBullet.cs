@@ -16,12 +16,12 @@ public class ShotgunBullet : Bullet //снаряд, который не удал
 
     public override void Hit(RaycastHit hit)
     {
-        if (hit.collider.tag.Equals("Enemy"))
+        if (hit.collider.CompareTag("Enemy"))
         {
             numberOfBreaks--;
             coll.radius /= 2;
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
             if (numberOfBreaks <= 0)
                 Destroy(gameObject);
         }
@@ -30,13 +30,13 @@ public class ShotgunBullet : Bullet //снаряд, который не удал
             if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
             {
                 bullet.Explosion();
-                Messenger.Broadcast(GameEvent.HIT);
+                GameController.HIT.Invoke();
             }
         }
         else if (hit.collider.CompareTag("InteractiveBox"))
         {
             hit.collider.GetComponent<InteractiveBox>().OnFightAction();
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
         else
         {

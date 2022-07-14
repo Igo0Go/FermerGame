@@ -13,23 +13,11 @@ public class PlayerInventory : MonoBehaviour
 
     private void Awake()
     {
-        Messenger.AddListener(GameEvent.WEAPON_ARE_HIDDEN, SetWeapon);
-        Messenger.AddListener(GameEvent.WEAPON_READY, ReturnOpportunityToChangeWeapon);
-        Messenger<int>.AddListener(GameEvent.TAKE_BONUS_DAMAGE, OnTakeBonusDamage);
-        Messenger.AddListener(GameEvent.RETURN_TO_DEFAULT, OnReturnToDefault);
-        Messenger.AddListener(GameEvent.START_FINAL_LOADING, HideAllWeapon);
-
-      //  Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
-    }
-    private void OnDestroy()
-    {
-        Messenger.RemoveListener(GameEvent.WEAPON_ARE_HIDDEN, SetWeapon);
-        Messenger.RemoveListener(GameEvent.WEAPON_READY, ReturnOpportunityToChangeWeapon);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_DAMAGE, OnTakeBonusDamage);
-        Messenger.RemoveListener(GameEvent.RETURN_TO_DEFAULT, OnReturnToDefault);
-        Messenger.RemoveListener(GameEvent.START_FINAL_LOADING, HideAllWeapon);
-
-        //   Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
+        GameController.WEAPON_ARE_HIDDEN.AddListener(SetWeapon);
+        GameController.WEAPON_READY.AddListener(ReturnOpportunityToChangeWeapon);
+        GameController.TAKE_BONUS_DAMAGE.AddListener(OnTakeBonusDamage);
+        GameController.RETURN_TO_DEFAULT.AddListener(OnReturnToDefault);
+        GameController.START_FINAL_LOADING.AddListener(HideAllWeapon);
     }
 
     private void Update()
@@ -58,7 +46,7 @@ public class PlayerInventory : MonoBehaviour
             if(currentWeapon > 0)
                 weapons[currentWeapon].HideWeapon();
             currentWeapon = -1;
-            Messenger<int>.Broadcast(GameEvent.WEAPON_ARE_CHANGED, -1);
+            GameController.WEAPON_ARE_CHANGED.Invoke(-1);
             SetWeapon();
         }
         if (currentWeapon != number && weapons[number].pack.open)
@@ -67,7 +55,7 @@ public class PlayerInventory : MonoBehaviour
                 weapons[currentWeapon].HideWeapon();
             else
             {
-                Invoke("SetWeapon", 1);
+                Invoke(nameof(SetWeapon), 1);
             }
             currentWeapon = number;
             //opportunityToChangeWeapon = false;
@@ -89,8 +77,8 @@ public class PlayerInventory : MonoBehaviour
     {
         //opportunityToChangeWeapon = true;
         weapons[currentWeapon].Init(lookpoint);
-        Messenger<int>.Broadcast(GameEvent.WEAPON_ARE_CHANGED, currentWeapon);
-        Messenger<int>.Broadcast(GameEvent.AMMO_ARE_CHANGED, weapons[currentWeapon].pack.currentAmmo);
+        GameController.WEAPON_ARE_CHANGED.Invoke(currentWeapon);
+        GameController.AMMO_ARE_CHANGED.Invoke(weapons[currentWeapon].pack.currentAmmo);
     }
     private void FastCheckWeapon()
     {
@@ -127,7 +115,7 @@ public class PlayerInventory : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag.Equals("Item"))
+        if(other.CompareTag("Item"))
         {
             other.GetComponent<GameItem>().SetTarget(transform);
         }

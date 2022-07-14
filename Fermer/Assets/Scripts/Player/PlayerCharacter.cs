@@ -13,18 +13,10 @@ public class PlayerCharacter : AliveController
 
     private void Awake()
     {
-        Messenger<int>.AddListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulnerable);
-        Messenger.AddListener(GameEvent.SPRINT_ACTION, PlaySprintSound);
-        Messenger.AddListener(GameEvent.START_FINAL_LOADING, SetUpToFinalLoading);
+        GameController.TAKE_BONUS_INVULNERABLE.AddListener(OnTakeBonusInvulnerable);
+        GameController.SPRINT_ACTION.AddListener(PlaySprintSound);
+        GameController.START_FINAL_LOADING.AddListener(SetUpToFinalLoading);
         opportunityToDead = true;
-        //   Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
-    }
-    private void OnDestroy()
-    {
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulnerable);
-        Messenger.RemoveListener(GameEvent.SPRINT_ACTION, PlaySprintSound);
-        Messenger.RemoveListener(GameEvent.START_FINAL_LOADING, SetUpToFinalLoading);
-        //    Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
 
     private void Start()
@@ -32,13 +24,12 @@ public class PlayerCharacter : AliveController
         DontDestroyOnLoad(gameObject);
         source = GetComponent<AudioSource>();
         Setup();
-      //  Messenger<float>.Broadcast(GameEvent.CHANGE_MAX_HEALTH, maxHealth);
     }
 
     public void Setup()
     {
         Health = maxHealth;
-        Messenger<float>.Broadcast(GameEvent.CHANGE_HEALTH, maxHealth);
+        GameController.CHANGE_HEALTH.Invoke(maxHealth);
     }
 
     public override void GetDamage(int damage)
@@ -47,13 +38,13 @@ public class PlayerCharacter : AliveController
         {
             source.PlayOneShot(damageClips[Random.Range(0, damageClips.Count)]);
             base.GetDamage(damage);
-            Messenger<float>.Broadcast(GameEvent.CHANGE_HEALTH, Health);
+            GameController.CHANGE_HEALTH.Invoke(Health);
         }
     }
     public void RestoreHealth(int hp)
     {
         Health += hp;
-        Messenger<float>.Broadcast(GameEvent.CHANGE_HEALTH, Health);
+        GameController.CHANGE_HEALTH.Invoke(Health);
     }
    
     public void OnTakeDamageFromDirection(Vector3 pos)
@@ -84,7 +75,7 @@ public class PlayerCharacter : AliveController
         else if (degrees >= -67.5f && degrees <= -22.5f)
             result = 7;
 
-        Messenger<int>.Broadcast(GameEvent.DAMAGE_MARKER_ACTIVATE, result);
+        GameController.DAMAGE_MARKER_ACTIVATE.Invoke(result);
     }
 
     private void OnTakeBonusInvulnerable(int value)
@@ -99,7 +90,7 @@ public class PlayerCharacter : AliveController
 
     public override void Death()
     {
-        Messenger.Broadcast(GameEvent.PLAYER_DEAD);
+        GameController.PLAYER_DEAD.Invoke();
     }
 
     private void SetUpToFinalLoading()

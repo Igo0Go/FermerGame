@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 
 public class Bullet : MonoBehaviour //уничтожается при первом столкновении
@@ -36,7 +34,7 @@ public class Bullet : MonoBehaviour //уничтожается при перво
 
     public virtual void MoveBullet()
     {
-        transform.position += transform.forward * speed * Time.deltaTime;
+        transform.position += speed * Time.deltaTime * transform.forward;
         if(Physics.Linecast(pos, transform.position, out RaycastHit hit ,~ignoreMask))
         {
             Hit(hit);
@@ -60,7 +58,7 @@ public class Bullet : MonoBehaviour //уничтожается при перво
         if (hit.collider.CompareTag("Enemy"))
         {
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
         else if(hit.collider.CompareTag("Player"))
         {
@@ -69,16 +67,16 @@ public class Bullet : MonoBehaviour //уничтожается при перво
         }
         else if(hit.collider.CompareTag("Bullet"))
         {
-            if(hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
+            if(hit.collider.TryGetComponent(out TargetTrackerBullet bullet))
             {
                 bullet.Explosion();
-                Messenger.Broadcast(GameEvent.HIT);
+                GameController.HIT.Invoke();
             }
         }
         else if (hit.collider.CompareTag("InteractiveBox"))
         {
             hit.collider.GetComponent<InteractiveBox>().OnFightAction();
-                Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
 
         Destroy(gameObject);
@@ -89,20 +87,20 @@ public class Bullet : MonoBehaviour //уничтожается при перво
         if (hit.collider.CompareTag("Enemy"))
         {
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
         else if (hit.collider.CompareTag("Bullet"))
         {
             if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
             {
                 bullet.Explosion();
-                Messenger.Broadcast(GameEvent.HIT);
+                GameController.HIT.Invoke();
             }
         }
         else if (hit.collider.CompareTag("InteractiveBox"))
         {
             hit.collider.GetComponent<InteractiveBox>().OnFightAction();
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
 
         GameObject obj = Instantiate(decal);
