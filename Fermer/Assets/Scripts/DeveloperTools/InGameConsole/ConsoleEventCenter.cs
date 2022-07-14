@@ -30,10 +30,10 @@ public static class ConsoleEventCenter
         ClearAllBonuses = new DebugCommand("clear_all_bonuses", "убирает эффекты всех бонусов", "clear_all_bonuses");
         ClearAllBonuses.Execute.AddListener(() =>
         {
-            Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_JUMP, 1);
-            Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_SPEED, 1);
-            Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_DAMAGE, 1);
-            Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_INVULNERABLE, 1);
+            GameController.TAKE_BONUS_JUMP.Invoke(1);
+            GameController.TAKE_BONUS_SPEED.Invoke(1);
+            GameController.TAKE_BONUS_DAMAGE.Invoke(1);
+            GameController.TAKE_BONUS_INVULNERABLE.Invoke(1);
         }
         );
 
@@ -47,19 +47,19 @@ public static class ConsoleEventCenter
         {
             if (bonusType.Equals("jump"))
             {
-                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_JUMP, 3);
+                GameController.TAKE_BONUS_JUMP.Invoke(3);
             }
             else if (bonusType.Equals("speed"))
             {
-                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_SPEED, 3);
+                GameController.TAKE_BONUS_SPEED.Invoke(3);
             }
             else if (bonusType.Equals("damage"))
             {
-                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_DAMAGE, 3);
+                GameController.TAKE_BONUS_DAMAGE.Invoke(3);
             }
             else if (bonusType.Equals("invulnerability"))
             {
-                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_INVULNERABLE, 3);
+                GameController.TAKE_BONUS_INVULNERABLE.Invoke(3);
             }
         });
 

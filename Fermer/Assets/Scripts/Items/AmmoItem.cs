@@ -17,8 +17,8 @@ public class AmmoItem : GameItem //пополнить количество па�
         {
             player.weapons[number].pack.currentAmmo = player.weapons[number].pack.maxAmmo;
         }
-        if(player.currentWeapon == number)
-            Messenger<int>.Broadcast(GameEvent.AMMO_ARE_CHANGED, player.weapons[number].pack.currentAmmo);
+        if (player.currentWeapon == number)
+            GameController.AMMO_ARE_CHANGED.Invoke(player.weapons[number].pack.currentAmmo);
     }
 
     public override void SetTarget(Transform target)

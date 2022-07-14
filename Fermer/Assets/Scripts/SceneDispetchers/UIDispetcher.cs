@@ -51,125 +51,29 @@ public class UIDispetcher : MonoBehaviour
 
     void Awake()
     {
-        Messenger.AddListener(GameEvent.HIT, OnHit);
-        Messenger<int>.AddListener(GameEvent.ENEMY_HIT, OnChangeScore);
-        Messenger<int>.AddListener(GameEvent.CHANGE_SPRINT_COUNT, OnChangeSprint);
-        Messenger<int>.AddListener(GameEvent.WEAPON_ARE_CHANGED, OnChangeWeapon);
-        Messenger<int>.AddListener(GameEvent.AMMO_ARE_CHANGED, OnChangeAmmo);
-        Messenger<float>.AddListener(GameEvent.CHANGE_HEALTH, OnChangeHealth);
-        Messenger<float>.AddListener(GameEvent.CHANGE_MAX_HEALTH, OnChangeMaxHealth);
-        
-        Messenger<int>.AddListener(GameEvent.TAKE_BONUS_JUMP, OnTakeBonusJump);
-        Messenger<int>.AddListener(GameEvent.TAKE_BONUS_SPEED, OnTakeBonusSpeed);
-        Messenger<int>.AddListener(GameEvent.TAKE_BONUS_DAMAGE, OnTakeBonusDamage);
-        Messenger<int>.AddListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulrable);
-        Messenger.AddListener(GameEvent.PLAYER_DEAD, OnPlayerDead);
-        Messenger<int>.AddListener(GameEvent.NEXT_WAVE, OnNextWave);
-        Messenger<int>.AddListener(GameEvent.DAMAGE_MARKER_ACTIVATE, OnDamageMarkerActivate);
-        Messenger<Vector3>.AddListener(GameEvent.START_SPRINT, EnebleSprintEffect);
-        Messenger.AddListener(GameEvent.STOP_SPRINT, DisableAllSprintEffects);
-        Messenger.AddListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
-        Messenger.AddListener(GameEvent.START_FINAL_LOADING, StartBlackPanelCoroutine);
-
-        //Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
-    }
-    void OnDestroy()
-    {
-        Messenger.RemoveListener(GameEvent.HIT, OnHit);
-        Messenger<int>.RemoveListener(GameEvent.ENEMY_HIT, OnChangeScore);
-        Messenger<int>.RemoveListener(GameEvent.CHANGE_SPRINT_COUNT, OnChangeSprint);
-        Messenger<float>.RemoveListener(GameEvent.CHANGE_HEALTH, OnChangeHealth);
-        Messenger<float>.RemoveListener(GameEvent.CHANGE_MAX_HEALTH, OnChangeMaxHealth);
-
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_JUMP, OnTakeBonusJump);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_SPEED, OnTakeBonusSpeed);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_DAMAGE, OnTakeBonusDamage);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_INVULNERABLE, OnTakeBonusInvulrable);
-        Messenger<int>.RemoveListener(GameEvent.NEXT_WAVE, OnNextWave);
-        Messenger<int>.RemoveListener(GameEvent.DAMAGE_MARKER_ACTIVATE, OnDamageMarkerActivate);
-
-        Messenger<Vector3>.RemoveListener(GameEvent.START_SPRINT, EnebleSprintEffect);
-        Messenger.RemoveListener(GameEvent.STOP_SPRINT, DisableAllSprintEffects);
-
-        Messenger.RemoveListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
-        Messenger.RemoveListener(GameEvent.START_FINAL_LOADING, StartBlackPanelCoroutine);
-        //Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
+        GameController.HIT.AddListener(OnHit);
+        GameController.ENEMY_HIT.AddListener(OnChangeScore);
+        GameController.CHANGE_SPRINT_COUNT.AddListener(OnChangeSprint);
+        GameController.WEAPON_ARE_CHANGED.AddListener(OnChangeWeapon);
+        GameController.AMMO_ARE_CHANGED.AddListener(OnChangeAmmo);
+        GameController.CHANGE_HEALTH.AddListener(OnChangeHealth);
+        GameController.CHANGE_MAX_HEALTH.AddListener(OnChangeMaxHealth);
+        GameController.TAKE_BONUS_JUMP.AddListener(OnTakeBonusJump);
+        GameController.TAKE_BONUS_SPEED.AddListener(OnTakeBonusSpeed);
+        GameController.TAKE_BONUS_DAMAGE.AddListener(OnTakeBonusDamage);
+        GameController.TAKE_BONUS_INVULNERABLE.AddListener(OnTakeBonusInvulrable);
+        GameController.PLAYER_DEAD.AddListener(OnPlayerDead);
+        GameController.NEXT_WAVE.AddListener(OnNextWave);
+        GameController.DAMAGE_MARKER_ACTIVATE.AddListener(OnDamageMarkerActivate);
+        GameController.START_SPRINT.AddListener(EnebleSprintEffect);
+        GameController.STOP_SPRINT.AddListener(DisableAllSprintEffects);
+        GameController.ENEMY_DEAD.AddListener(OnEnemyDead);
+        GameController.START_FINAL_LOADING.AddListener(StartBlackPanelCoroutine);
     }
 
    private void Start()
     {
         DontDestroyOnLoad(gameObject);
-
-        #region Буду благодарен, если посмотрите эту часть
-
-        /*
-        
-        Изначально для перезапуска я планировал просто перезагружать сцену. Однако обнаружилась пролема - ссылки на UI элементы были равны 'null после перезагрузки'.
-        При использвании сцены загрузки как буфера, результат тот же. Естественно, всё дебажил. Ниже код. Я пытался подгружать все объекты вручную, поскольку знаю строение
-        префаба. Ни один из этих способов не помог. Вообще создалось впечатление, что ссылки обнуляются уже после того, как отработает Start(). Возможно из-за использования
-        Messanger. Как будто не вызывается OnDestroy и ссылки на Messanger не удаляются, из-за чего удаление элементов происходит некорреткно. Но в таком случае, почему только
-        интерфейс?
-         
-        В итоге мне пришлось помечать игрока и интерфейс как DontDestroyOnLoad(). Вся сцена перезагружаюется, а игрок и интерфейс просто вручную переводились в изначальное
-        состояние. Я считаю, что это - костыль. Однако я общался с другими людьми, которые занимаются Unity профессионально, и мне сказали, что такой ход вполне рабочее решение.
-         
-        Если не затруднит и сталкивались с таким случаем, дайте, пожалуйста, комментарий по этому случаю. Заранее благодарю.
-
-         */
-
-        //GameObject bufer;
-        //if(FindInChildrenByName("SettingsPanel", transform, out bufer))
-        //{
-        //    settingsPanel = bufer;
-        //}
-        //if (FindInChildrenByName("ScoreLabel", transform, out bufer))
-        //{
-        //    scoreLabel = bufer.GetComponent<Text>();
-        //}
-        //if (FindInChildrenByName("MusicSlider", transform, out bufer))
-        //{
-        //    musicSlider = bufer.GetComponent<Slider>();
-        //}
-        //if (FindInChildrenByName("SoundsSlider", transform, out bufer))
-        //{
-        //    soundsSlider = bufer.GetComponent<Slider>();
-        //}
-        //if (FindInChildrenByName("HealthSlider", transform, out bufer))
-        //{
-        //    healthSlider = bufer.GetComponent<Slider>();
-        //}
-        //if(FindInChildrenByName("HitMarker", transform, out bufer))
-        //{
-        //    hitMarker = bufer;
-        //}
-        //for (int i = 0; i < 3; i++)
-        //{
-        //    if (FindInChildrenByName("SprintLight" + (i+1), transform, out bufer))
-        //    {
-        //        sprintLights[i] = bufer;
-        //    }
-        //}
-        //for (int i = 0; i < 4; i++)
-        //{
-        //    if (FindInChildrenByName("WeaponIkon" + (i + 1), transform, out bufer))
-        //    {
-        //        weaponImages[i] = bufer;
-        //    }
-        //}
-        //if (FindInChildrenByName("AmmoText", transform, out bufer))
-        //{
-        //    ammoText = bufer.GetComponent<Text>();
-        //}
-        //if (FindInChildrenByName("FinalPanel", transform, out bufer))
-        //{
-        //    finalPanel = bufer;
-        //}
-        //if (FindInChildrenByName("FinalScoreValueText", transform, out bufer))
-        //{
-        //    finalScoreValueText = bufer.GetComponent<Text>();
-        //}
-
-        #endregion
 
         Setup();
     }
@@ -211,8 +115,6 @@ public class UIDispetcher : MonoBehaviour
         OnChangeScore(0);
         hitMarker.SetActive(false);
         jumpBonusSlider.value = speedBonusSlider.value = damageBonusSlider.value = invilnvurableBonusSlider.value = 0;
-        //oper = SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
-        //oper.allowSceneActivation = false;
         finalPanel.SetActive(false);
         healthSlider.value = healthSlider.maxValue;
         waveCounterText.text = string.Empty;
@@ -273,7 +175,7 @@ public class UIDispetcher : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         Time.timeScale = 0;
-        Messenger<bool>.Broadcast(GameEvent.PAUSE, true);
+        GameController.PAUSE.Invoke(true);
         finalPanel.SetActive(true);
         finalScoreValueText.text = score.ToString();
     }
@@ -374,21 +276,21 @@ public class UIDispetcher : MonoBehaviour
     public void OnMusicValueChanged()
     {
         PlayerPrefs.SetFloat("Music", musicVolumeSlider.value);
-        Messenger<float>.Broadcast(GameEvent.MUSIC_CHANGED, musicVolumeSlider.value);
+        GameController.MUSIC_CHANGED.Invoke(musicVolumeSlider.value);
     }
     public void OnSoundsValueChanged()
     {
         PlayerPrefs.SetFloat("Sounds", soundsVolumeSlider.value);
-        Messenger<float>.Broadcast(GameEvent.SOUNDS_CHANGED, soundsVolumeSlider.value);
+        GameController.SOUNDS_CHANGED.Invoke(soundsVolumeSlider.value);
     }
     public void OnVoiceValueChanged()
     {
         PlayerPrefs.SetFloat("Voices", voiceVolumeSlider.value);
-        Messenger<float>.Broadcast(GameEvent.VOICE_CHANGED, voiceVolumeSlider.value);
+        GameController.VOICE_CHANGED.Invoke(voiceVolumeSlider.value);
     }
     public void OnMouseValueChanged()
     {
-        Messenger<float>.Broadcast(GameEvent.MOUSE_CHANGED, mouseSlider.value);
+        GameController.MOUSE_CHANGED.Invoke(mouseSlider.value);
     }
     private void OnChangeScore(int value)
     {
@@ -405,7 +307,7 @@ public class UIDispetcher : MonoBehaviour
     private void OnHit()
     {
         hitMarker.SetActive(true);
-        Invoke("ReturnHitMarker", 0.5f);
+        Invoke(nameof(ReturnHitMarker), 0.5f);
     }
     private void EnebleSprintEffect(Vector3 direction)
     {
@@ -446,7 +348,7 @@ public class UIDispetcher : MonoBehaviour
     public void Restart()
     {
         OnExit();
-        Invoke("RestartScene", 1);
+        Invoke(nameof(RestartScene), 1);
     }
     public void ExitGame()
     {
@@ -477,18 +379,7 @@ public class UIDispetcher : MonoBehaviour
     }
     private void OnExit()
     {
-        Messenger.Broadcast(GameEvent.EXIT_LEVEL);
-
-        //settingsPanel.SetActive(false);
-        //settingsPanel.SetActive(false);
-        //hitMarker.SetActive(false);
-        //jumpBonusSlider.value = speedBonusSlider.value = damageBonusSlider.value = invilnvurableBonusSlider.value = 0;
-        //jumpBonusSlider.gameObject.SetActive(false);
-        //speedBonusSlider.gameObject.SetActive(false);
-        //damageBonusSlider.gameObject.SetActive(false);
-        //invilnvurableBonusSlider.gameObject.SetActive(false);
-        
-      //  Messenger.Broadcast(GameEvent.EXIT_LEVEL);
+        GameController.EXIT_LEVEL.Invoke();
     }
 
     private void CheckSliders()
@@ -498,7 +389,7 @@ public class UIDispetcher : MonoBehaviour
             if(jumpBonusSlider.value - Time.deltaTime <= 0)
             {
                 jumpBonusSlider.value = 0;
-                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_JUMP, 1);
+                GameController.TAKE_BONUS_JUMP.Invoke(1);
             }
             else if(PlayerBonusStat.bonusPack[BonusType.Jump] < 3)
             {
@@ -510,7 +401,7 @@ public class UIDispetcher : MonoBehaviour
             if (speedBonusSlider.value - Time.deltaTime <= 0)
             {
                 speedBonusSlider.value = 0;
-                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_SPEED, 1);
+                GameController.TAKE_BONUS_SPEED.Invoke(1);
             }
             else if (PlayerBonusStat.bonusPack[BonusType.Speed] < 3)
             {
@@ -522,7 +413,7 @@ public class UIDispetcher : MonoBehaviour
             if (damageBonusSlider.value - Time.deltaTime <= 0)
             {
                 damageBonusSlider.value = 0;
-                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_DAMAGE, 1);
+                GameController.TAKE_BONUS_DAMAGE.Invoke(1);
             }
             else if (PlayerBonusStat.bonusPack[BonusType.Damage] < 3)
             {
@@ -534,7 +425,7 @@ public class UIDispetcher : MonoBehaviour
             if (invilnvurableBonusSlider.value - Time.deltaTime <= 0)
             {
                 invilnvurableBonusSlider.value = 0;
-                Messenger<int>.Broadcast(GameEvent.TAKE_BONUS_INVULNERABLE, 1);
+                GameController.TAKE_BONUS_INVULNERABLE.Invoke(1);
             }
             else if (PlayerBonusStat.bonusPack[BonusType.Invulnerable] < 3)
             {
@@ -548,7 +439,7 @@ public class UIDispetcher : MonoBehaviour
         Cursor.visible = value;
         Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
         Time.timeScale = value ? 0 : 1;
-        Messenger<bool>.Broadcast(GameEvent.PAUSE, value);
+        GameController.PAUSE.Invoke(value);
     }
 
     private void ReturnHitMarker()

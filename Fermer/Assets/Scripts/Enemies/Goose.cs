@@ -39,7 +39,7 @@ public class Goose : Enemy //Гусь с ракетной установкой (
     }
     protected override void OnFightAction()
     {
-        Messenger<int>.Broadcast(GameEvent.ENEMY_HIT, scoreForWin);
+        GameController.ENEMY_HIT.Invoke(scoreForWin);
         if (Health - 50 > 0)
         {
             GetDamage(50);
@@ -50,7 +50,7 @@ public class Goose : Enemy //Гусь с ракетной установкой (
             Instantiate(afterFightLoot, transform.position + dir, Quaternion.identity).GetComponent<Rigidbody>()
                 .AddForce(dir, ForceMode.Impulse);
             Instantiate(postDeadDecal, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
-            Messenger.Broadcast(GameEvent.ENEMY_DEAD);
+            GameController.ENEMY_DEAD.Invoke();
             Destroy(gameObject);
         }
     }
@@ -131,15 +131,14 @@ public class Goose : Enemy //Гусь с ракетной установкой (
     {
         shootPoints[currentShootPoint].LookAt(target);
         GameObject currentBullet = Instantiate(bulletPrefab) as GameObject;
-        currentBullet.transform.position = shootPoints[currentShootPoint].position;
-        currentBullet.transform.rotation = transform.rotation;
+        currentBullet.transform.SetPositionAndRotation(shootPoints[currentShootPoint].position, transform.rotation);
         Bullet bulletScript = currentBullet.GetComponent<Bullet>();
         bulletScript.Init(bulletSpeed, 5, damage, ignoreMask);
-        if (bulletScript is TargetTrackerBullet)
+        if (bulletScript is TargetTrackerBullet bullet)
         {
-            ((TargetTrackerBullet)bulletScript).SetTarget(target);
+            bullet.SetTarget(target);
         }
-        Invoke("NextShootAction", timeBetweenShootActions);
+        Invoke(nameof(NextShootAction), timeBetweenShootActions);
         state = EnemyState.Recoil;
     }
 
@@ -156,12 +155,12 @@ public class Goose : Enemy //Гусь с ракетной установкой (
         if (currentShootPoint > shootPoints.Count - 1)
         {
             opportunityToShoot = -1;
-            Invoke("ReturnOpportunityToShoot", recoilTime);
+            Invoke(nameof(ReturnOpportunityToShoot), recoilTime);
             state = EnemyState.MoveToTarget;
         }
         else
         {
-                Invoke("ShootAgain", recoilTime);
+            Invoke(nameof(ShootAgain), recoilTime);
         }
         anim.SetInteger("Shoot", 0);
     }

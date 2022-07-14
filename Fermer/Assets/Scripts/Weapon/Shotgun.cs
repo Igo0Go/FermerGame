@@ -43,8 +43,8 @@ public class Shotgun : Weapon
                     anim.SetInteger("AltShoot", 2);
                     opportunityToShoot = false;
                     pack.currentAmmo--;
-                    Messenger<int>.Broadcast(GameEvent.AMMO_ARE_CHANGED, pack.currentAmmo);
-                    Invoke("ReturnOpportunityToShoot", currentRecoilTime);
+                    GameController.AMMO_ARE_CHANGED.Invoke(pack.currentAmmo);
+                    Invoke(nameof(ReturnOpportunityToShoot), currentRecoilTime);
                     currentRecoilTime -= step;
                     if (currentRecoilTime < minRecoilTime)
                         currentRecoilTime = minRecoilTime;
@@ -68,7 +68,7 @@ public class Shotgun : Weapon
                 anim.SetTrigger("Shoot");
                 opportunityToShoot = false;
                 pack.currentAmmo--;
-                Messenger<int>.Broadcast(GameEvent.AMMO_ARE_CHANGED, pack.currentAmmo);
+                GameController.AMMO_ARE_CHANGED.Invoke(pack.currentAmmo);
             }
         }
     }

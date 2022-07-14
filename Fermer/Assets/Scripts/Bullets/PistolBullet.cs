@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PistolBullet : Bullet //летит сквозь врагов
 {
     public override void MoveBullet()
     {
-        transform.position += transform.forward * speed * Time.deltaTime;
+        transform.position += speed * Time.deltaTime * transform.forward;
         transform.localScale += new Vector3(Time.deltaTime * speed / 5, 0, 0);
         Vector3 dir = transform.position - pos;
         if (Physics.Linecast(pos, transform.position, out RaycastHit hit, ~ignoreMask))
@@ -26,7 +24,7 @@ public class PistolBullet : Bullet //летит сквозь врагов
         if (hit.collider.CompareTag("Enemy"))
         {
             hit.collider.GetComponent<AliveController>().GetDamage(damage);
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
             return;
         }
         else if (hit.collider.CompareTag("Bullet"))
@@ -34,7 +32,7 @@ public class PistolBullet : Bullet //летит сквозь врагов
             if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
             {
                 bullet.Explosion();
-                Messenger.Broadcast(GameEvent.HIT);
+                GameController.HIT.Invoke();
                 Destroy(gameObject);
                 return;
             }
@@ -47,7 +45,7 @@ public class PistolBullet : Bullet //летит сквозь врагов
         else if (hit.collider.CompareTag("InteractiveBox"))
         {
             hit.collider.GetComponent<InteractiveBox>().OnFightAction();
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
         else
         {
@@ -65,15 +63,15 @@ public class PistolBullet : Bullet //летит сквозь врагов
         if (hit.collider.CompareTag("Enemy"))
         {
             hit.collider.GetComponent<AliveController>().GetDamage(90);
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
             return;
         }
         else if (hit.collider.CompareTag("Bullet"))
         {
-            if (hit.collider.TryGetComponent<TargetTrackerBullet>(out TargetTrackerBullet bullet))
+            if (hit.collider.TryGetComponent(out TargetTrackerBullet bullet))
             {
                 bullet.Explosion();
-                Messenger.Broadcast(GameEvent.HIT);
+                GameController.HIT.Invoke();
                 return;
             }
         }
@@ -85,7 +83,7 @@ public class PistolBullet : Bullet //летит сквозь врагов
         else if (hit.collider.CompareTag("InteractiveBox"))
         {
             hit.collider.GetComponent<InteractiveBox>().OnFightAction();
-            Messenger.Broadcast(GameEvent.HIT);
+            GameController.HIT.Invoke();
         }
     }
 }

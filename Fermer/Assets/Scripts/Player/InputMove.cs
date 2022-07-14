@@ -29,17 +29,10 @@ public class InputMove : MonoBehaviour
     void Awake()
     {
         PlayerBonusStat.Init();
-        Messenger<bool>.AddListener(GameEvent.PAUSE, OnPause);
-        Messenger<int>.AddListener(GameEvent.TAKE_BONUS_JUMP, OnTakeBonusJump);
-        Messenger<int>.AddListener(GameEvent.TAKE_BONUS_SPEED, OnTakeBonusSpeed);
-    //    Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
-    }
-    void OnDestroy()
-    {
-        Messenger<bool>.RemoveListener(GameEvent.PAUSE, OnPause);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_JUMP, OnTakeBonusJump);
-        Messenger<int>.RemoveListener(GameEvent.TAKE_BONUS_SPEED, OnTakeBonusSpeed);
-     //   Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
+
+        GameController.PAUSE.AddListener(OnPause);
+        GameController.TAKE_BONUS_JUMP.AddListener(OnTakeBonusJump);
+        GameController.TAKE_BONUS_SPEED.AddListener(OnTakeBonusSpeed);
     }
 
     private void Start()
@@ -63,9 +56,8 @@ public class InputMove : MonoBehaviour
     {
         startup = true;
         moveVector = Vector3.zero;
-        transform.position = targetPos.position;
-        transform.rotation = targetPos.rotation;
-        Invoke("StopStartup", 0.5f);
+        transform.SetPositionAndRotation(targetPos.position, targetPos.rotation);
+        Invoke(nameof(StopStartup), 0.5f);
     }
 
     private void OnTakeBonusJump(int value)
@@ -121,7 +113,7 @@ public class InputMove : MonoBehaviour
             float deltaX = Input.GetAxis("Horizontal") * speed;
             float deltaZ = Input.GetAxis("Vertical") * speed;
             moveVector = new Vector3(deltaX, 0, deltaZ);
-            moveVector = Vector3.ClampMagnitude(moveVector, speed) * sprintMultiplicatorBufer * PlayerBonusStat.bonusPack[BonusType.Speed]; //Ограничим движение по диагонали той же скоростью, что и движение параллельно осям
+            moveVector = PlayerBonusStat.bonusPack[BonusType.Speed] * sprintMultiplicatorBufer * Vector3.ClampMagnitude(moveVector, speed); //Ограничим движение по диагонали той же скоростью, что и движение параллельно осям
             horSpeed = moveVector;
             moveVector.y = vertSpeed;
             moveVector *= (Time.deltaTime);
@@ -139,13 +131,14 @@ public class InputMove : MonoBehaviour
                 fall = false;
                 fallTimer += sprintTime + 0.1f;
                 sprintMultiplicatorBufer = sprintMultiplicator;
-                Invoke("ReturnSprintOpportunity", sprintTime);
-                Invoke("StopSprint", sprintTime + 0.1f);
+                Invoke(nameof(ReturnSprintOpportunity), sprintTime);
+                Invoke(nameof(StopSprint), sprintTime + 0.1f);
                 sprintCount--;
                 currentSprintReloadTime = sprintReloadTime;
-                Messenger<int>.Broadcast(GameEvent.CHANGE_SPRINT_COUNT, sprintCount);
-                Messenger.Broadcast(GameEvent.SPRINT_ACTION);
-                Messenger<Vector3>.Broadcast(GameEvent.START_SPRINT, horSpeed);
+
+                GameController.CHANGE_SPRINT_COUNT.Invoke(sprintCount);
+                GameController.SPRINT_ACTION.Invoke();
+                GameController.START_SPRINT.Invoke(horSpeed);
             }
         }
         if(sprintCount < 3)
@@ -156,7 +149,7 @@ public class InputMove : MonoBehaviour
                 sprintCount++;
                 currentSprintReloadTime = sprintCount == 3 ? 0 : sprintReloadTime;
                 sprintMultiplicatorBufer = 1;
-                Messenger<int>.Broadcast(GameEvent.CHANGE_SPRINT_COUNT, sprintCount);
+                GameController.CHANGE_SPRINT_COUNT.Invoke(sprintCount);
             }
         }
     }
@@ -171,7 +164,7 @@ public class InputMove : MonoBehaviour
     private void ReturnSprintOpportunity()=> sprintMultiplicatorBufer = 1;
     private void StopSprint()
     {
-        Messenger.Broadcast(GameEvent.STOP_SPRINT);
+        GameController.STOP_SPRINT.Invoke();
     }
     #endregion
 }

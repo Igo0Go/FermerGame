@@ -6,7 +6,23 @@
     {
         if(PlayerBonusStat.bonusPack[type] == 1)
         {
-            Messenger<int>.Broadcast("TAKE_BONUS_" + type.ToString().ToUpper(), 2);
+            switch (type)
+            {
+                case BonusType.Speed:
+                    GameController.TAKE_BONUS_SPEED.Invoke(2);
+                    break;
+                case BonusType.Jump:
+                    GameController.TAKE_BONUS_JUMP.Invoke(2);
+                    break;
+                case BonusType.Damage:
+                    GameController.TAKE_BONUS_DAMAGE.Invoke(2);
+                    break;
+                case BonusType.Invulnerable:
+                    GameController.TAKE_BONUS_INVULNERABLE.Invoke(2);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

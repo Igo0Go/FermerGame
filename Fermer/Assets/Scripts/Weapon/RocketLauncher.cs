@@ -37,7 +37,7 @@ public class RocketLauncher : Weapon
             anim.SetTrigger("Shoot");
             opportunityToShoot = false;
             pack.currentAmmo--;
-            Messenger<int>.Broadcast(GameEvent.AMMO_ARE_CHANGED, pack.currentAmmo);
+            GameController.AMMO_ARE_CHANGED.Invoke(pack.currentAmmo);
             if (altShoot && pack.currentAmmo == 0)
             {
                 ChangeShootType();

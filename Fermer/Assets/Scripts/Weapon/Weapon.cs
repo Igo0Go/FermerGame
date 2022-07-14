@@ -11,7 +11,7 @@ public abstract class Weapon : MonoBehaviour
     [Range(1, 100)] public int damage = 15;
     
     [SerializeField] protected Transform shootPoint;
-    [SerializeField] public LayerMask ignoreMask;
+    public LayerMask ignoreMask;
     [SerializeField] protected AudioSource source;
     [SerializeField] protected AudioClip shoot;
     [SerializeField] protected AudioClip reload;
@@ -27,16 +27,8 @@ public abstract class Weapon : MonoBehaviour
 
     void Awake()
     {
-        Messenger<bool>.AddListener(GameEvent.PAUSE, OnPause);
-       // Messenger.AddListener(GameEvent.EXIT_LEVEL, OnDestroy);
-
+        GameController.PAUSE.AddListener(OnPause);
         anim = GetComponent<Animator>();
-    }
-   
-    void OnDestroy()
-    {
-        Messenger<bool>.RemoveListener(GameEvent.PAUSE, OnPause);
-       //  Messenger.RemoveListener(GameEvent.EXIT_LEVEL, OnDestroy);
     }
 
     //каждое оружие имеет основной и альтернативный режим стрельбы
@@ -81,12 +73,12 @@ public abstract class Weapon : MonoBehaviour
 
     private void OnHideWeapon()
     {
-        Messenger.Broadcast(GameEvent.WEAPON_ARE_HIDDEN);
+        GameController.WEAPON_ARE_HIDDEN.Invoke();
         opportunityToShoot = false;
     }
     private void OnWeaponReady()
     {
-        Messenger.Broadcast(GameEvent.WEAPON_READY);
+        GameController.WEAPON_READY.Invoke();
         anim.SetBool("Hide", false);
         opportunityToShoot = true;
     }

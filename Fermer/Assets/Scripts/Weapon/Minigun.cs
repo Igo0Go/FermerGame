@@ -28,8 +28,8 @@ public class Minigun : Weapon
                 anim.SetBool("Shoot", true);
                 opportunityToShoot = false;
                 pack.currentAmmo--;
-                Messenger<int>.Broadcast(GameEvent.AMMO_ARE_CHANGED, pack.currentAmmo);
-                Invoke("ReturnOpportunityToShoot", recoilTime);
+                GameController.AMMO_ARE_CHANGED.Invoke(pack.currentAmmo);
+                Invoke(nameof(ReturnOpportunityToShoot), recoilTime);
             }
             else
             {
@@ -61,7 +61,7 @@ public class Minigun : Weapon
             turret.transform.position = hit.point + hit.normal * 0.15f;
             turret.transform.up = hit.normal;
             turret.GetComponent<Turret>().Init(this);
-            Messenger.Broadcast(GameEvent.RETURN_TO_DEFAULT);
+            GameController.RETURN_TO_DEFAULT.Invoke();
         }
     }
     private void ReturnOpportunityToShoot()

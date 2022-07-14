@@ -95,11 +95,17 @@ public class InGameConsole : MonoBehaviour
                 }
                 else if (baseCommand is DebugCommand<int> intCommand)
                 {
-                    intCommand.Invoke(int.Parse(properties[1]));
+                    if (properties[1] != null)
+                    {
+                        intCommand.Invoke(int.Parse(properties[1]));
+                    }
                 }
                 else if (baseCommand is DebugCommand<string> stringCommand)
                 {
-                    stringCommand.Invoke(properties[1]);
+                    if(properties[1] != null)
+                    {
+                        stringCommand.Invoke(properties[1]);
+                    }
                 }
             }
         }
