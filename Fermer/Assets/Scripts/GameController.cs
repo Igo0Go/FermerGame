@@ -6,9 +6,9 @@ using UnityEngine;
 public static class GameController
 {
     public static UnityEvent<bool> PAUSE { get; private set; }
-    public static UnityEvent EXIT_LEVEL { get; private set; }
     public static UnityEvent START_FINAL_LOADING { get; private set; }
     public static UnityEvent<int> NEXT_WAVE { get; private set; }
+    public static UnityEvent<GameObject> KILL_ENEMY_FROM_WAVE { get; private set; }
 
     public static UnityEvent<float> MUSIC_CHANGED { get; private set; }
     public static UnityEvent<float> SOUNDS_CHANGED { get; private set; }
@@ -48,9 +48,9 @@ public static class GameController
     public static void Init()
     {
         PAUSE = new UnityEvent<bool>();
-        EXIT_LEVEL = new UnityEvent();
         START_FINAL_LOADING = new UnityEvent();
         NEXT_WAVE = new UnityEvent<int>();
+        KILL_ENEMY_FROM_WAVE = new UnityEvent<GameObject>();
 
         MUSIC_CHANGED = new UnityEvent<float>();
         SOUNDS_CHANGED = new UnityEvent<float>();

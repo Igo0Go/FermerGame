@@ -39,141 +39,29 @@ public class SceneController : MonoBehaviour
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
     private int currentMusicIndex;
+    [SerializeField]
     private List<GameObject> currentWave;
-    private bool opportunityToCheck;
     private bool rayToLast;
     private bool controlMovingCubes;
     private bool alarm;
 
+    private bool needKillEnemies;
+    private bool needListenDialogue;
+
     private readonly string musicFolderPath = Path.Combine(Application.streamingAssetsPath, "Music");
-
-    public void NoMovingCubesControl() => controlMovingCubes = false;
-
-    public void OnPlayerEntered()
-    {
-        currentMusicIndex = -1;
-        NextMusic();
-        Destroy(GetComponent<BoxCollider>());
-        NextWave();
-        SavedObjects.toArena = true;
-    }
-
-    public void Alarm()
-    {
-        alarm = true;
-        if(controlMovingCubes)
-        {
-            arenaController.AllToDefault();
-        }
-        currentWave = new List<GameObject>();
-        foreach (var item in alarmBots)
-        {
-            currentWave.Add(Instantiate(item, randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
-        }
-        if (musicSource.isPlaying)
-        {
-            musicSource.Stop();
-        }
-        musicSource.clip = alarmMusic;
-        musicSource.Play();
-    }
-
-    private void NextWave()
-    {
-        float replicasTime = 0;
-        currentWaveNumber++;
-        if (currentWaveNumber > 0 && controlMovingCubes)
-        {
-            foreach (var item in waves[currentWaveNumber - 1].movingCubes)
-            {
-                item.ToDefaultPos();
-            }
-        }
-        currentWave = new List<GameObject>();
-        GameController.NEXT_WAVE.Invoke(currentWaveNumber);
-        foreach (var item in waves[currentWaveNumber].bots)
-        {
-            currentWave.Add(Instantiate(item, randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
-        }
-        for (int i = 0; i < waves[currentWaveNumber].airBotsCount; i++)
-        {
-            int number = i;
-            if (number >= pointsInAir.Count)
-            {
-                number -= i;
-            }
-            currentWave.Add(Instantiate(airBot, pointsInAir[number].position, Quaternion.identity));
-        }
-        replicDispether.AddInList(waves[currentWaveNumber].voicesForWave);
-        for (int i = 0; i < waves[currentWaveNumber].voicesForWave.Count; i++)
-        {
-            replicasTime += waves[currentWaveNumber].voicesForWave[i].clip.length;
-        }
-        if (currentWaveNumber > 0 && controlMovingCubes)
-        {
-            foreach (var item in waves[currentWaveNumber - 1].movingCubes)
-            {
-                item.ToDefaultPos();
-            }
-        }
-        Invoke(nameof(SetPolygone), 5);
-        Invoke(nameof(ReturnOpportunityToCheck), replicasTime + 5);
-    }
-
-    private void RandomWave()
-    {
-        currentWaveNumber++;
-        currentWave = new List<GameObject>();
-        GameController.NEXT_WAVE.Invoke(currentWaveNumber);
-        foreach (var item in randomBots)
-        {
-            currentWave.Add(Instantiate(item, randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
-        }
-        foreach (var item in pointsInAir)
-        {
-            currentWave.Add(Instantiate(airBot, item.position, Quaternion.identity));
-        }
-
-        if (controlMovingCubes)
-        {
-            foreach (var item in movingCubes)
-            {
-                item.ToDefaultPos();
-            }
-            foreach (var item in movingCubes)
-            {
-                if (UnityEngine.Random.Range(0, 2) > 0)
-                {
-                    item.ChangePosition();
-                }
-            }
-        }
-
-        List<ReplicItem> currentRandomReplic = new List<ReplicItem>() { randomReplic[UnityEngine.Random.Range(0, randomReplic.Count)] };
-        replicDispether.AddInList(currentRandomReplic);
-        Invoke(nameof(ReturnOpportunityToCheck), currentRandomReplic[0].clip.length + 5);
-    }
-
-    private void SetPolygone()
-    {
-        if(controlMovingCubes)
-        {
-            foreach (var item in waves[currentWaveNumber].movingCubes)
-            {
-                item.ChangePosition();
-            }
-        }
-    }
 
     private void Awake()
     {
         GameController.Init();
-        GameController.EXIT_LEVEL.AddListener(Setup);
+        GameController.KILL_ENEMY_FROM_WAVE.AddListener(OnEnemyDead);
+
+        needKillEnemies = needListenDialogue = true;
+        rayToLast = false;
     }
 
     private void Start()
     {
-        if(TryLoadPlayerMusic(out List<AudioClip> clips))
+        if (TryLoadPlayerMusic(out List<AudioClip> clips))
         {
             randomMusic = clips;
         }
@@ -183,8 +71,8 @@ public class SceneController : MonoBehaviour
     private void Setup()
     {
         ConsoleEventCenter.TeleportToArena.Execute.AddListener(OnTpToArena);
-        ConsoleEventCenter.KillWave.Execute.AddListener(OnSkipWave);
-
+        ConsoleEventCenter.KillWave.Execute.AddListener(OnKillEnemies);
+        lineRenderer.enabled = false;
         controlMovingCubes = true;
         currentWaveNumber = -1;
 
@@ -199,7 +87,7 @@ public class SceneController : MonoBehaviour
             SavedObjects.player = Instantiate(player, Vector3.zero, Quaternion.identity);
         }
         SavedObjects.UIDispetcher.GetComponent<UIDispetcher>().Setup();
-        SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena? 1: 0]);
+        SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena ? 1 : 0]);
         SavedObjects.player.GetComponent<PlayerInventory>().Setup();
 
         replicDispether = SavedObjects.UIDispetcher.GetComponent<UIDispetcher>().replicDispether;
@@ -210,54 +98,212 @@ public class SceneController : MonoBehaviour
         replicDispether.Setup();
         replicDispether.ClearList();
     }
-    private void Update()
+
+    public void OnPlayerEntered()
     {
+        NextMusic();
+
+        replicDispether.replicasEnd.AddListener(OnDialogueEnd);
+
+        SavedObjects.toArena = true;
+        Destroy(GetComponent<BoxCollider>());
+
+        currentMusicIndex = -1;
+        needKillEnemies = needListenDialogue = false;
         CheckWave();
-        RayToLast();
     }
+
+    private void OnTpToArena()
+    {
+        SavedObjects.toArena = true;
+        SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena ? 1 : 0]);
+    }
+    private void OnKillEnemies()
+    {
+        StartCoroutine(KillWaveCoroutine());
+    }
+
+    private void OnEnemyDead(GameObject enemy)
+    {
+        if (currentWave == null)
+            return;
+
+        if (currentWave.Contains(enemy))
+        {
+            currentWave.Remove(enemy);
+        }
+
+        if (currentWave.Count == 1)
+        {
+            StartCoroutine(RayToLastCoroutine());
+        }
+        if (currentWave.Count == 0)
+        {
+            rayToLast = false;
+            needKillEnemies = false;
+            if (needListenDialogue)
+                StartCoroutine(CheckWaveCoroutine());
+        }
+    }
+    private void OnDialogueEnd()
+    {
+        needListenDialogue = false;
+
+        if (needKillEnemies)
+            StartCoroutine(CheckWaveCoroutine());
+    }
+
     private void CheckWave()
     {
-        if (currentWave != null && opportunityToCheck)
+        needListenDialogue = needKillEnemies = true;
+        rayToLast = false;
+        currentWaveNumber++;
+        GameController.NEXT_WAVE.Invoke(currentWaveNumber);
+        replicDispether.replicasEnd.AddListener(OnDialogueEnd);
+        GameObject obj = null;
+        if (!alarm)
         {
-            for (int i = 0; i < currentWave.Count; i++)
+
+            if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
             {
-                if (currentWave[i] == null)
-                {
-                    currentWave.Remove(currentWave[i]);
-                    i--;
-                }
+                obj = Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
             }
+            currentWave = null;
 
-            rayToLast = currentWave.Count == 1;
-
-            if (currentWave.Count == 0)
+            if (currentWaveNumber < waves.Count)
             {
-                if(!alarm)
+                ScenarioWave();
+            }
+            else
+            {
+                RandomWave();
+            }
+        }
+        else
+        {
+            FinalAlarm();
+        }
+
+        if(obj != null && obj.TryGetComponent(out Enemy enemy))
+        {
+            currentWave.Add(obj);
+        }
+    }
+
+    private void ScenarioWave()
+    {
+        ChangeCubes();
+        SpawnEnemies(waves[currentWaveNumber].bots);
+        SpawnAirBots();
+        replicDispether.AddInList(waves[currentWaveNumber].voicesForWave);
+    }
+    private void RandomWave()
+    {
+        ChangeCubesRandom();
+        SpawnEnemies(randomBots);
+        SpawnAirBots();
+        List<ReplicItem> currentRandomReplic = new List<ReplicItem>() { randomReplic[UnityEngine.Random.Range(0, randomReplic.Count)] };
+        replicDispether.AddInList(currentRandomReplic);
+    }
+    public void Alarm()
+    {
+        alarm = true;
+        if(controlMovingCubes)
+        {
+            arenaController.AllToDefault();
+        }
+        currentWave = new List<GameObject>();
+        foreach (var item in alarmBots)
+        {
+            currentWave.Add(Instantiate(item, 
+                randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
+        }
+        if (musicSource.isPlaying)
+        {
+            musicSource.Stop();
+        }
+        musicSource.clip = alarmMusic;
+        musicSource.Play();
+    }
+    private void FinalAlarm()
+    {
+        replicDispether.AddInList(new List<ReplicItem>() { alarmFinalReplica });
+        GameController.START_FINAL_LOADING.Invoke();
+        Invoke(nameof(LoadFinalScene), 4);
+    }
+
+    private void ChangeCubes()
+    {
+        if (currentWaveNumber > 0 && controlMovingCubes)
+        {
+            foreach (var item in waves[currentWaveNumber - 1].movingCubes)
+            {
+                item.ToDefaultPos();
+            }
+        }
+        Invoke(nameof(SetPolygone), 5);
+    }
+    private void ChangeCubesRandom()
+    {
+        if (controlMovingCubes)
+        {
+            foreach (var item in movingCubes)
+            {
+                item.ToDefaultPos();
+            }
+            foreach (var item in movingCubes)
+            {
+                if (UnityEngine.Random.Range(0, 2) > 0)
                 {
-                    rayToLast = true;
-                    if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
-                    {
-                        Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
-                    }
-                    opportunityToCheck = false;
-                    currentWave = null;
-                    if (currentWaveNumber < waves.Count - 1)
-                        NextWave();
-                    else
-                        RandomWave();
-                }
-                else
-                {
-                    opportunityToCheck = false;
-                    FinalAlarm();
+                    item.ChangePosition();
                 }
             }
         }
     }
-    private void ReturnOpportunityToCheck() => opportunityToCheck = true;
+    private void SpawnEnemies(List<GameObject> enemies)
+    {
+        currentWave = new List<GameObject>();
+        foreach (var item in enemies)
+        {
+            currentWave.Add(Instantiate(item,
+                randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
+        }
+    }
+    private void SpawnAirBots()
+    {
+        int airBotsCount = currentWaveNumber < waves.Count ? waves[currentWaveNumber].airBotsCount : 5;
+
+        for (int i = 0; i < airBotsCount; i++)
+        {
+            int number = i;
+            if (number >= pointsInAir.Count)
+            {
+                number -= i;
+            }
+            currentWave.Add(Instantiate(airBot, pointsInAir[number].position, Quaternion.identity));
+        }
+    }
+
+    private void SetPolygone()
+    {
+        if (controlMovingCubes)
+        {
+            foreach (var item in waves[currentWaveNumber].movingCubes)
+            {
+                item.ChangePosition();
+            }
+        }
+    }
+    public void NoMovingCubesControl() => controlMovingCubes = false;
+    private void LoadFinalScene()
+    {
+        SceneManager.LoadScene(1);
+        transitCamera.SetActive(true);
+    }
+
     private void NextMusic()
     {
-        if(!alarm)
+        if (!alarm)
         {
             if (musicSource.isPlaying)
             {
@@ -268,37 +314,6 @@ public class SceneController : MonoBehaviour
             musicSource.clip = randomMusic[currentMusicIndex];
             musicSource.Play();
             Invoke(nameof(NextMusic), musicSource.clip.length + 1);
-        }
-    }
-
-    private void FinalAlarm()
-    {
-        replicDispether.AddInList(new List<ReplicItem>() { alarmFinalReplica});
-        GameController.START_FINAL_LOADING.Invoke();
-        Invoke(nameof(LoadFinalScene), 4);
-    }
-    private void LoadFinalScene()
-    {
-        SceneManager.LoadScene(1);
-        transitCamera.SetActive(true);
-    }
-
-    private void RayToLast()
-    {
-        if(currentWave != null)
-        {
-            rayToLast = currentWave.Count == 1;
-        }
-
-        if(rayToLast)
-        {
-            lineRenderer.enabled = true;
-            lineRenderer.SetPosition(0, pointer.position);
-            lineRenderer.SetPosition(1, currentWave[0].transform.position);
-        }
-        else
-        {
-            lineRenderer.enabled = false;
         }
     }
     private bool TryLoadPlayerMusic(out List<AudioClip> audioClips)
@@ -333,33 +348,55 @@ public class SceneController : MonoBehaviour
         return true;
     }
 
-    private void OnTpToArena()
+    private IEnumerator KillWaveCoroutine()
     {
-        SavedObjects.toArena = true;
-        SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena ? 1 : 0]);
-        replicDispether.StopAll();
-    }
-    private void OnSkipWave()
-    {
-        if(currentWaveNumber >= 0)
+        StopCoroutine(CheckWaveCoroutine());
+
+        bool bufer = needListenDialogue;
+        needListenDialogue = true;
+
+        if (currentWaveNumber >= 0)
         {
-            replicDispether.StopAll();
             for (int i = 0; i < currentWave.Count; i++)
             {
-                if(currentWave[i] != null)
+                if (currentWave[i] != null)
                 {
                     currentWave[i].GetComponent<Enemy>().Death();
+                    i--;
                 }
             }
-            currentWave.Clear();
-            StartCoroutine(DelayedMethod(3, ()=> { opportunityToCheck = true; }));
+        }
+        yield return new WaitForSeconds(1);
+        needListenDialogue = bufer;
+    }
+    private IEnumerator CheckWaveCoroutine()
+    {
+        while (true)
+        {
+            if (needKillEnemies || needListenDialogue)
+                yield return new WaitForSeconds(1);
+            else
+            {
+                CheckWave();
+                break;
+            }
         }
     }
-
-    private IEnumerator DelayedMethod(float delay, Action method)
+    private IEnumerator RayToLastCoroutine()
     {
-        yield return new WaitForSeconds(delay);
-        method?.Invoke();
+        rayToLast = true;
+        lineRenderer.enabled = true;
+
+        while (rayToLast)
+        {
+            if (currentWave == null || currentWave[0] == null)
+                break;
+
+            lineRenderer.SetPosition(0, pointer.position);
+            lineRenderer.SetPosition(1, currentWave[0].transform.position);
+            yield return null;
+        }
+        lineRenderer.enabled = false;
     }
 
     [SerializeField] private GameObject player;

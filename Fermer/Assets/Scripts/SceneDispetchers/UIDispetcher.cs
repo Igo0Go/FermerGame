@@ -347,7 +347,6 @@ public class UIDispetcher : MonoBehaviour
     }
     public void Restart()
     {
-        OnExit();
         Invoke(nameof(RestartScene), 1);
     }
     public void ExitGame()
@@ -376,10 +375,6 @@ public class UIDispetcher : MonoBehaviour
         musicVolumeSlider.value = PlayerPrefs.GetFloat("Music", 0.5f);
         soundsVolumeSlider.value = PlayerPrefs.GetFloat("Sounds", 0.5f);
         voiceVolumeSlider.value = PlayerPrefs.GetFloat("Voices", 1);
-    }
-    private void OnExit()
-    {
-        GameController.EXIT_LEVEL.Invoke();
     }
 
     private void CheckSliders()
