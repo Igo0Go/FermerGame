@@ -49,35 +49,6 @@ public class UIDispetcher : MonoBehaviour
     private int score;
     private float scoreReturnTime;
 
-    void Awake()
-    {
-        GameController.HIT.AddListener(OnHit);
-        GameController.ENEMY_HIT.AddListener(OnChangeScore);
-        GameController.CHANGE_SPRINT_COUNT.AddListener(OnChangeSprint);
-        GameController.WEAPON_ARE_CHANGED.AddListener(OnChangeWeapon);
-        GameController.AMMO_ARE_CHANGED.AddListener(OnChangeAmmo);
-        GameController.CHANGE_HEALTH.AddListener(OnChangeHealth);
-        GameController.CHANGE_MAX_HEALTH.AddListener(OnChangeMaxHealth);
-        GameController.TAKE_BONUS_JUMP.AddListener(OnTakeBonusJump);
-        GameController.TAKE_BONUS_SPEED.AddListener(OnTakeBonusSpeed);
-        GameController.TAKE_BONUS_DAMAGE.AddListener(OnTakeBonusDamage);
-        GameController.TAKE_BONUS_INVULNERABLE.AddListener(OnTakeBonusInvulrable);
-        GameController.PLAYER_DEAD.AddListener(OnPlayerDead);
-        GameController.NEXT_WAVE.AddListener(OnNextWave);
-        GameController.DAMAGE_MARKER_ACTIVATE.AddListener(OnDamageMarkerActivate);
-        GameController.START_SPRINT.AddListener(EnebleSprintEffect);
-        GameController.STOP_SPRINT.AddListener(DisableAllSprintEffects);
-        GameController.ENEMY_DEAD.AddListener(OnEnemyDead);
-        GameController.START_FINAL_LOADING.AddListener(StartBlackPanelCoroutine);
-    }
-
-   private void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-
-        Setup();
-    }
-
     void Update()
     {
         if (Input.GetButtonDown("Cancel") && opportunityToShowSettings)
@@ -100,6 +71,25 @@ public class UIDispetcher : MonoBehaviour
 
     public void Setup()
     {
+        GameController.HIT.AddListener(OnHit);
+        GameController.ENEMY_HIT.AddListener(OnChangeScore);
+        GameController.CHANGE_SPRINT_COUNT.AddListener(OnChangeSprint);
+        GameController.WEAPON_ARE_CHANGED.AddListener(OnChangeWeapon);
+        GameController.AMMO_ARE_CHANGED.AddListener(OnChangeAmmo);
+        GameController.CHANGE_HEALTH.AddListener(OnChangeHealth);
+        GameController.CHANGE_MAX_HEALTH.AddListener(OnChangeMaxHealth);
+        GameController.TAKE_BONUS_JUMP.AddListener(OnTakeBonusJump);
+        GameController.TAKE_BONUS_SPEED.AddListener(OnTakeBonusSpeed);
+        GameController.TAKE_BONUS_DAMAGE.AddListener(OnTakeBonusDamage);
+        GameController.TAKE_BONUS_INVULNERABLE.AddListener(OnTakeBonusInvulrable);
+        GameController.PLAYER_DEAD.AddListener(OnPlayerDead);
+        GameController.NEXT_WAVE.AddListener(OnNextWave);
+        GameController.DAMAGE_MARKER_ACTIVATE.AddListener(OnDamageMarkerActivate);
+        GameController.START_SPRINT.AddListener(EnebleSprintEffect);
+        GameController.STOP_SPRINT.AddListener(DisableAllSprintEffects);
+        GameController.ENEMY_DEAD.AddListener(OnEnemyDead);
+        GameController.START_FINAL_LOADING.AddListener(StartBlackPanelCoroutine);
+
         PlayerPrefs.DeleteAll();
         PlayerPrefs.SetFloat("Mouse", 0.5f);
         PlayerPrefs.SetFloat("Music", 0.25f);
@@ -347,7 +337,7 @@ public class UIDispetcher : MonoBehaviour
     }
     public void Restart()
     {
-        Invoke(nameof(RestartScene), 1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     public void ExitGame()
     {
@@ -441,5 +431,4 @@ public class UIDispetcher : MonoBehaviour
     {
         hitMarker.SetActive(false);
     }
-    private void RestartScene() => SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 }

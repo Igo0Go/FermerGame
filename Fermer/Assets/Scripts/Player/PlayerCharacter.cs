@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -11,17 +10,12 @@ public class PlayerCharacter : AliveController
     private AudioSource source;
     private bool opportunityToDead;
 
-    private void Awake()
+    private void Start()
     {
         GameController.TAKE_BONUS_INVULNERABLE.AddListener(OnTakeBonusInvulnerable);
         GameController.SPRINT_ACTION.AddListener(PlaySprintSound);
         GameController.START_FINAL_LOADING.AddListener(SetUpToFinalLoading);
         opportunityToDead = true;
-    }
-
-    private void Start()
-    {
-        DontDestroyOnLoad(gameObject);
         source = GetComponent<AudioSource>();
         Setup();
     }

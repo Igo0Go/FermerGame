@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public static class PlayerBonusStat
 {
@@ -10,10 +8,12 @@ public static class PlayerBonusStat
     public static void Init()
     {
         scoreMultiplicator = 1;
-        bonusPack = new Dictionary<BonusType, int>();
-        bonusPack.Add(BonusType.Damage, 1);
-        bonusPack.Add(BonusType.Invulnerable, 1);
-        bonusPack.Add(BonusType.Jump, 1);
-        bonusPack.Add(BonusType.Speed, 1);
+        bonusPack = new Dictionary<BonusType, int>
+        {
+            { BonusType.Damage, 1 },
+            { BonusType.Invulnerable, 1 },
+            { BonusType.Jump, 1 },
+            { BonusType.Speed, 1 }
+        };
     }
 }

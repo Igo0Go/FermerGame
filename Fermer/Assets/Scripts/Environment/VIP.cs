@@ -5,17 +5,16 @@ using UnityEngine.Events;
 
 public class VIP : AliveController
 {
+    [SerializeField] private ReplicDispether replicDispether;
     [SerializeField] private List<ReplicItem> onDamageReplicas;
     [SerializeField] private List<ReplicItem> finalReplicas;
     [SerializeField] private UnityEvent onDeath;
     [SerializeField] private UnityEvent onFirstDamage;
 
-    private ReplicDispether replicDispether;
 
     private void Start()
     {
         Health = maxHealth;
-        StartCoroutine(GetReplicDispethcer());
     }
 
     public override void GetDamage(int damage)
@@ -48,22 +47,6 @@ public class VIP : AliveController
             int index = Random.Range(0, onDamageReplicas.Count);
             replicDispether.AddInList(new List<ReplicItem>() { onDamageReplicas[index] });
             onDamageReplicas.RemoveAt(index);
-        }
-    }
-
-    private IEnumerator GetReplicDispethcer()
-    {
-        while(replicDispether == null)
-        {
-            try
-            {
-                replicDispether = SavedObjects.UIDispetcher.GetComponent<UIDispetcher>().replicDispether;
-            }
-            catch
-            {
-
-            }
-            yield return null;
         }
     }
 }

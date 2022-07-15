@@ -22,6 +22,7 @@ public class ReplicDispether : MonoBehaviour
     private void Awake()
     {
         replicasEnd = new UnityEvent();
+        bufer = null;
     }
 
     private void Update()

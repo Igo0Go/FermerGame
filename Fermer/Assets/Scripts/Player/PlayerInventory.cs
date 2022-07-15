@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
@@ -9,16 +8,6 @@ public class PlayerInventory : MonoBehaviour
     [HideInInspector] public int currentWeapon = 0;
 
     private Transform lookpoint;
-   // private bool opportunityToChangeWeapon = true;
-
-    private void Awake()
-    {
-        GameController.WEAPON_ARE_HIDDEN.AddListener(SetWeapon);
-        GameController.WEAPON_READY.AddListener(ReturnOpportunityToChangeWeapon);
-        GameController.TAKE_BONUS_DAMAGE.AddListener(OnTakeBonusDamage);
-        GameController.RETURN_TO_DEFAULT.AddListener(OnReturnToDefault);
-        GameController.START_FINAL_LOADING.AddListener(HideAllWeapon);
-    }
 
     private void Update()
     {
@@ -27,12 +16,17 @@ public class PlayerInventory : MonoBehaviour
 
     public void Setup()
     {
+        GameController.WEAPON_ARE_HIDDEN.AddListener(SetWeapon);
+        GameController.WEAPON_READY.AddListener(ReturnOpportunityToChangeWeapon);
+        GameController.TAKE_BONUS_DAMAGE.AddListener(OnTakeBonusDamage);
+        GameController.RETURN_TO_DEFAULT.AddListener(OnReturnToDefault);
+        GameController.START_FINAL_LOADING.AddListener(HideAllWeapon);
+
         foreach (var item in weapons)
         {
             item.pack.open = false;
         }
         CheckWeaponForChange(-1);
-        //opportunityToChangeWeapon = true;
     }
 
     public void SetLookPoint(Transform lookPoint)
@@ -58,7 +52,6 @@ public class PlayerInventory : MonoBehaviour
                 Invoke(nameof(SetWeapon), 1);
             }
             currentWeapon = number;
-            //opportunityToChangeWeapon = false;
         }
     }
 
@@ -75,7 +68,6 @@ public class PlayerInventory : MonoBehaviour
     }
     private void ReturnOpportunityToChangeWeapon()
     {
-        //opportunityToChangeWeapon = true;
         weapons[currentWeapon].Init(lookpoint);
         GameController.WEAPON_ARE_CHANGED.Invoke(currentWeapon);
         GameController.AMMO_ARE_CHANGED.Invoke(weapons[currentWeapon].pack.currentAmmo);

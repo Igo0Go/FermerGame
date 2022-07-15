@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
@@ -9,21 +8,11 @@ public class ReplicPointScript : MonoBehaviour
     public List<ReplicItem> replicas;
     public List<TranslateScript> movingCubes;
 
-    private void Awake()
-    {
-        GetComponent<BoxCollider>().enabled = false;
-    }
-
-    private void Start()
-    {
-        StartCoroutine(ToStart());
-    }
-
     public void PlayReplicas()
     {
-        GetComponent<BoxCollider>().enabled = false;
         replicDispether.AddInList(replicas);
         replicDispether.replicasEnd.AddListener(OnReplicasEnd);
+        GetComponent<BoxCollider>().enabled = false;
     }
 
     private void OnReplicasEnd()
@@ -38,10 +27,5 @@ public class ReplicPointScript : MonoBehaviour
         {
             item.ChangePosition();
         }
-    }
-    private IEnumerator ToStart()
-    {
-        yield return new WaitForSeconds(1);
-        GetComponent<BoxCollider>().enabled = true;
     }
 }
