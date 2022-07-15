@@ -39,6 +39,7 @@ public class SceneController : MonoBehaviour
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
     private int currentMusicIndex;
+    [SerializeField]
     private List<GameObject> currentWave;
     private bool rayToLast;
     private bool controlMovingCubes;
@@ -52,8 +53,7 @@ public class SceneController : MonoBehaviour
     private void Awake()
     {
         GameController.Init();
-        GameController.EXIT_LEVEL.AddListener(Setup);
-        GameController.ENEMY_DEAD.AddListener(OnEnemyDead);
+        GameController.KILL_ENEMY_FROM_WAVE.AddListener(OnEnemyDead);
 
         needKillEnemies = needListenDialogue = true;
         rayToLast = false;
@@ -71,7 +71,7 @@ public class SceneController : MonoBehaviour
     private void Setup()
     {
         ConsoleEventCenter.TeleportToArena.Execute.AddListener(OnTpToArena);
-        ConsoleEventCenter.KillWave.Execute.AddListener(OnSkipWave);
+        ConsoleEventCenter.KillWave.Execute.AddListener(OnKillEnemies);
         lineRenderer.enabled = false;
         controlMovingCubes = true;
         currentWaveNumber = -1;
@@ -117,35 +117,20 @@ public class SceneController : MonoBehaviour
     {
         SavedObjects.toArena = true;
         SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena ? 1 : 0]);
-        replicDispether.StopAll();
     }
-    private void OnSkipWave()
+    private void OnKillEnemies()
     {
-        if (currentWaveNumber >= 0)
-        {
-            replicDispether.StopAll();
-            for (int i = 0; i < currentWave.Count; i++)
-            {
-                if (currentWave[i] != null)
-                {
-                    currentWave[i].GetComponent<Enemy>().Death();
-                }
-            }
-        }
+        StartCoroutine(KillWaveCoroutine());
     }
 
-    private void OnEnemyDead()
+    private void OnEnemyDead(GameObject enemy)
     {
         if (currentWave == null)
             return;
 
-        for (int i = 0; i < currentWave.Count; i++)
+        if (currentWave.Contains(enemy))
         {
-            if (currentWave[i] == null)
-            {
-                currentWave.RemoveAt(i);
-                i--;
-            }
+            currentWave.Remove(enemy);
         }
 
         if (currentWave.Count == 1)
@@ -156,45 +141,52 @@ public class SceneController : MonoBehaviour
         {
             rayToLast = false;
             needKillEnemies = false;
-            CheckWave();
+            if (needListenDialogue)
+                StartCoroutine(CheckWaveCoroutine());
         }
     }
     private void OnDialogueEnd()
     {
         needListenDialogue = false;
-        CheckWave();
+
+        if (needKillEnemies)
+            StartCoroutine(CheckWaveCoroutine());
     }
 
     private void CheckWave()
     {
-        if (needKillEnemies)
-            return;
-
-        if (needListenDialogue)
-            return;
-
-
         needListenDialogue = needKillEnemies = true;
         rayToLast = false;
         currentWaveNumber++;
         GameController.NEXT_WAVE.Invoke(currentWaveNumber);
-
+        replicDispether.replicasEnd.AddListener(OnDialogueEnd);
+        GameObject obj = null;
         if (!alarm)
         {
+
             if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
             {
-                Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
+                obj = Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
             }
             currentWave = null;
 
-            if (currentWaveNumber < waves.Count - 1)
+            if (currentWaveNumber < waves.Count)
+            {
                 ScenarioWave();
+            }
             else
+            {
                 RandomWave();
+            }
         }
         else
         {
             FinalAlarm();
+        }
+
+        if(obj != null && obj.TryGetComponent(out Enemy enemy))
+        {
+            currentWave.Add(obj);
         }
     }
 
@@ -202,12 +194,14 @@ public class SceneController : MonoBehaviour
     {
         ChangeCubes();
         SpawnEnemies(waves[currentWaveNumber].bots);
+        SpawnAirBots();
         replicDispether.AddInList(waves[currentWaveNumber].voicesForWave);
     }
     private void RandomWave()
     {
         ChangeCubesRandom();
         SpawnEnemies(randomBots);
+        SpawnAirBots();
         List<ReplicItem> currentRandomReplic = new List<ReplicItem>() { randomReplic[UnityEngine.Random.Range(0, randomReplic.Count)] };
         replicDispether.AddInList(currentRandomReplic);
     }
@@ -274,7 +268,12 @@ public class SceneController : MonoBehaviour
             currentWave.Add(Instantiate(item,
                 randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
         }
-        for (int i = 0; i < waves[currentWaveNumber].airBotsCount; i++)
+    }
+    private void SpawnAirBots()
+    {
+        int airBotsCount = currentWaveNumber < waves.Count ? waves[currentWaveNumber].airBotsCount : 5;
+
+        for (int i = 0; i < airBotsCount; i++)
         {
             int number = i;
             if (number >= pointsInAir.Count)
@@ -284,8 +283,6 @@ public class SceneController : MonoBehaviour
             currentWave.Add(Instantiate(airBot, pointsInAir[number].position, Quaternion.identity));
         }
     }
-
-
 
     private void SetPolygone()
     {
@@ -351,8 +348,40 @@ public class SceneController : MonoBehaviour
         return true;
     }
 
+    private IEnumerator KillWaveCoroutine()
+    {
+        StopCoroutine(CheckWaveCoroutine());
 
+        bool bufer = needListenDialogue;
+        needListenDialogue = true;
 
+        if (currentWaveNumber >= 0)
+        {
+            for (int i = 0; i < currentWave.Count; i++)
+            {
+                if (currentWave[i] != null)
+                {
+                    currentWave[i].GetComponent<Enemy>().Death();
+                    i--;
+                }
+            }
+        }
+        yield return new WaitForSeconds(1);
+        needListenDialogue = bufer;
+    }
+    private IEnumerator CheckWaveCoroutine()
+    {
+        while (true)
+        {
+            if (needKillEnemies || needListenDialogue)
+                yield return new WaitForSeconds(1);
+            else
+            {
+                CheckWave();
+                break;
+            }
+        }
+    }
     private IEnumerator RayToLastCoroutine()
     {
         rayToLast = true;

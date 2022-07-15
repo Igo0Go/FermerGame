@@ -30,7 +30,9 @@ public abstract class Enemy : AliveController
 
     protected virtual void OnFightAction()
     {
+        GameController.HIT.Invoke();
         GameController.ENEMY_HIT.Invoke(scoreForWin);
+        GameController.KILL_ENEMY_FROM_WAVE.Invoke(gameObject);
         Vector3 dir = new Vector3(Random.Range(-0.05f, 0.05f), 2, Random.Range(-0.05f, 0.05f));
         Instantiate(afterFightLoot, transform.position + dir, Quaternion.identity).GetComponent<Rigidbody>()
             .AddForce(dir, ForceMode.Impulse);
@@ -74,7 +76,6 @@ public abstract class Enemy : AliveController
         }
         else if (other.CompareTag("Blade"))
         {
-            GameController.HIT.Invoke();
             OnFightAction();
         }
     }
@@ -83,6 +84,10 @@ public abstract class Enemy : AliveController
         if (other.CompareTag("Turret"))
         {
             other.GetComponent<Turret>().RemoveTarget(transform);
+        }
+        else if (other.CompareTag("ArenaZone"))
+        {
+            Death();
         }
     }
 
@@ -104,6 +109,7 @@ public abstract class Enemy : AliveController
         }
         Instantiate(postDeadDecal, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
         GameController.ENEMY_DEAD.Invoke();
+        GameController.KILL_ENEMY_FROM_WAVE.Invoke(gameObject);
         Destroy(gameObject);
     }
     private void ReturnRB()

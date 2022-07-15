@@ -39,6 +39,7 @@ public class Goose : Enemy //Гусь с ракетной установкой (
     }
     protected override void OnFightAction()
     {
+        GameController.HIT.Invoke();
         GameController.ENEMY_HIT.Invoke(scoreForWin);
         if (Health - 50 > 0)
         {
@@ -46,6 +47,7 @@ public class Goose : Enemy //Гусь с ракетной установкой (
         }
         else
         {
+            GameController.KILL_ENEMY_FROM_WAVE.Invoke(gameObject);
             Vector3 dir = new Vector3(Random.Range(-0.05f, 0.05f), 2, Random.Range(-0.05f, 0.05f));
             Instantiate(afterFightLoot, transform.position + dir, Quaternion.identity).GetComponent<Rigidbody>()
                 .AddForce(dir, ForceMode.Impulse);

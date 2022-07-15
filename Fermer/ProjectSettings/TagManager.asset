@@ -16,6 +16,7 @@ TagManager:
   - Info
   - VIP
   - InteractiveBox
+  - ArenaZone
   layers:
   - Default
   - TransparentFX
