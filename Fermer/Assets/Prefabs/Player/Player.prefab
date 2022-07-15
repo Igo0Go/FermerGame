@@ -64,8 +64,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6667949911549405901}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 31.74, z: -256.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6667949912364534290}
@@ -149,7 +149,7 @@ MonoBehaviour:
   - {fileID: 6667949910648181029}
   - {fileID: 5471682687807890901}
   - {fileID: 2810577332963582412}
-  currentWeapon: 0
+  currentWeapon: -1
 --- !u!114 &6667949911549405911
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,13 +5,6 @@ using System;
 using System.IO;
 using UnityEngine.SceneManagement;
 
-public static class SavedObjects
-{
-    public static GameObject UIDispetcher;
-    public static GameObject player;
-    public static bool toArena;
-}
-
 public class SceneController : MonoBehaviour
 {
     public List<Transform> playerStartPos;
@@ -35,6 +28,9 @@ public class SceneController : MonoBehaviour
     [SerializeField] private Transform pointer;
     [SerializeField] private ArenaController arenaController;
     [SerializeField] private GameObject transitCamera;
+
+    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject playerUI;
 
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
@@ -78,19 +74,14 @@ public class SceneController : MonoBehaviour
 
         lineRenderer.positionCount = 2;
 
-        if (SavedObjects.UIDispetcher == null)
-        {
-            SavedObjects.UIDispetcher = Instantiate(playerUI);
-        }
-        if (SavedObjects.player == null)
-        {
-            SavedObjects.player = Instantiate(player, Vector3.zero, Quaternion.identity);
-        }
-        SavedObjects.UIDispetcher.GetComponent<UIDispetcher>().Setup();
-        SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena ? 1 : 0]);
-        SavedObjects.player.GetComponent<PlayerInventory>().Setup();
+        UIDispetcher ui = playerUI.GetComponent<UIDispetcher>();
 
-        replicDispether = SavedObjects.UIDispetcher.GetComponent<UIDispetcher>().replicDispether;
+        ui.Setup();
+
+        player.GetComponent<InputMove>().Setup(playerStartPos[GameController.toArena ? 1 : 0]);
+        player.GetComponent<PlayerInventory>().Setup();
+
+        replicDispether = ui.replicDispether;
         foreach (var item in replicPoints)
         {
             item.replicDispether = replicDispether;
@@ -105,7 +96,7 @@ public class SceneController : MonoBehaviour
 
         replicDispether.replicasEnd.AddListener(OnDialogueEnd);
 
-        SavedObjects.toArena = true;
+        GameController.toArena = true;
         Destroy(GetComponent<BoxCollider>());
 
         currentMusicIndex = -1;
@@ -115,8 +106,8 @@ public class SceneController : MonoBehaviour
 
     private void OnTpToArena()
     {
-        SavedObjects.toArena = true;
-        SavedObjects.player.GetComponent<InputMove>().Setup(playerStartPos[SavedObjects.toArena ? 1 : 0]);
+        GameController.toArena = true;
+        player.GetComponent<InputMove>().Setup(playerStartPos[GameController.toArena ? 1 : 0]);
     }
     private void OnKillEnemies()
     {
@@ -399,8 +390,6 @@ public class SceneController : MonoBehaviour
         lineRenderer.enabled = false;
     }
 
-    [SerializeField] private GameObject player;
-    [SerializeField] private GameObject playerUI;
 }
 
 [Serializable]

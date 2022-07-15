@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MouseLock : MonoBehaviour
 {
@@ -19,14 +17,11 @@ public class MouseLock : MonoBehaviour
     private float _rotationX = 0;
     private float sensivityMultiplicator;
 
-    void Awake()
-    {
+    void Start() {
+
         GameController.PAUSE.AddListener(OnPause);
         GameController.MOUSE_CHANGED.AddListener(OnChangeMouse);
-    }
 
-
-    void Start() {
         Rigidbody body = GetComponent<Rigidbody>();
         if (body != null) body.freezeRotation = true;
         if (viewObject == null) Debug.LogError("Не передана камера!");

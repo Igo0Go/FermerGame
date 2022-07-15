@@ -40,6 +40,9 @@ public static class GameController
     public static UnityEvent<int> TAKE_BONUS_DAMAGE { get; private set; }
     public static UnityEvent<int> TAKE_BONUS_INVULNERABLE { get; private set; }
 
+    public static bool toArena;
+
+
     static GameController()
     {
         Init();

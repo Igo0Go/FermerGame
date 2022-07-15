@@ -26,17 +26,14 @@ public class InputMove : MonoBehaviour
     private bool fall;
     private float fallTimer;
 
-    void Awake()
+    private void Start()
     {
         PlayerBonusStat.Init();
 
         GameController.PAUSE.AddListener(OnPause);
         GameController.TAKE_BONUS_JUMP.AddListener(OnTakeBonusJump);
         GameController.TAKE_BONUS_SPEED.AddListener(OnTakeBonusSpeed);
-    }
 
-    private void Start()
-    {
         vertSpeed = minFall;
         charController = GetComponent<CharacterController>();
         sprintMultiplicatorBufer = 1;
