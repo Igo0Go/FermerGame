@@ -60,7 +60,7 @@ public class SceneController : MonoBehaviour
 
     private void Setup()
     {
-        ConsoleEventCenter.TeleportToArena.Execute.AddListener(OnTpToArena);
+        ConsoleEventCenter.Teleport.Execute.AddListener(OnTpToArena);
         ConsoleEventCenter.KillWave.Execute.AddListener(OnKillEnemies);
         lineRenderer.enabled = false;
         controlMovingCubes = true;
@@ -97,10 +97,21 @@ public class SceneController : MonoBehaviour
         CheckWave();
     }
 
-    private void OnTpToArena()
+    private void OnTpToArena(string place)
     {
-        GameController.toArena = true;
-        player.GetComponent<InputMove>().Setup(playerStartPos[GameController.toArena ? 1 : 0]);
+        if (string.IsNullOrEmpty(place))
+            return;
+
+        if(place.Equals("arena"))
+        {
+            GameController.toArena = true;
+            player.GetComponent<InputMove>().Setup(playerStartPos[1]);
+        }
+        else if(place.Equals("start"))
+        {
+            GameController.toArena = false;
+            player.GetComponent<InputMove>().Setup(playerStartPos[0]);
+        }
     }
     private void OnKillEnemies()
     {
