@@ -43,7 +43,6 @@ public class ShotgunBullet : Bullet //снаряд, который не удал
             GameObject obj = Instantiate(decal);
             obj.transform.position = hit.point;
             obj.transform.forward = hit.normal;
-            obj.GetComponent<Decal>().Init(1);
             Destroy(gameObject);
         }
     }

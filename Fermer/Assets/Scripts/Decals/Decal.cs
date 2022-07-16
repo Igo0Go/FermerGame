@@ -1,11 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Decal : MonoBehaviour
 {
-    public void Init(float time)
+    [SerializeField, Min(0.1f)]
+    private float lifeTime;
+
+    private void Start()
     {
-        Destroy(gameObject, time);
+        Destroy(gameObject, lifeTime);
     }
 }

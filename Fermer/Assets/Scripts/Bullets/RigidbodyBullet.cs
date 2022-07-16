@@ -38,7 +38,6 @@ public class RigidbodyBullet : Bullet //снаряды, имеющие вес
     {
         GameObject obj = Instantiate(decal);
         obj.transform.position = transform.position;
-        obj.GetComponent<Decal>().Init(3);
     }
     private void ReactWithoutPlayer(Collision collision)
     {
@@ -46,7 +45,6 @@ public class RigidbodyBullet : Bullet //снаряды, имеющие вес
         {
             GameObject obj = Instantiate(decal);
             obj.transform.position = transform.position;
-            obj.GetComponent<Decal>().Init(3);
         }
     }
 

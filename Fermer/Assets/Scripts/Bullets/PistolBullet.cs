@@ -53,7 +53,6 @@ public class PistolBullet : Bullet //летит сквозь врагов
             obj.transform.position = hit.point;
             obj.transform.forward = hit.normal;
             obj.transform.localScale = transform.localScale;
-            obj.GetComponent<Decal>().Init(1);
             Destroy(gameObject);
         }
     }

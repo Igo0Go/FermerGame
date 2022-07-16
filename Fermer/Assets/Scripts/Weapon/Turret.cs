@@ -108,7 +108,7 @@ public class Turret : MonoBehaviour
 
     private void Selfdestruction()
     {
-        Instantiate(postDeadDecal, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
+        Instantiate(postDeadDecal, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 }

@@ -53,7 +53,7 @@ MonoBehaviour:
   playerReact: 1
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 68
   targetTrakckingSpeed: 0.3
 --- !u!136 &1929471842700401588
 CapsuleCollider:

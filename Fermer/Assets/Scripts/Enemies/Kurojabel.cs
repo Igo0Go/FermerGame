@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Kurojabel : SimpleEnemy //дережабль в виде курицы, который посылает сверху бомбы-яйца
 {

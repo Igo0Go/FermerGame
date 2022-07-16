@@ -1949,7 +1949,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8103585888823266103}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18, y: 0, z: -102.9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 8103585888227740780}
@@ -2038,7 +2038,7 @@ MonoBehaviour:
   - {fileID: 417881400672233718, guid: e027aa163f152c248b072a51a85cc271, type: 3}
   - {fileID: 7175353253671656714, guid: 451656f335e811f42b54a07525d33e59, type: 3}
   - {fileID: 1893234075552465738, guid: e9609fa716d627544a7589356258e720, type: 3}
-  postDeadDecal: {fileID: 1653712099042972719, guid: cd7280e400c4fc143929fd89b7f9a6b3,
+  postDeadDecal: {fileID: 5674999947132817842, guid: 545d8f75f027b254bad9eb261a43dc61,
     type: 3}
   afterFightLoot: {fileID: 2950403070913521480, guid: 287352674b5b2814fa4560b4967570b4,
     type: 3}

@@ -43,7 +43,6 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
         GameObject obj = Instantiate(decal);
         obj.transform.position = hit.point + hit.normal * 0.3f;
         obj.transform.forward = hit.normal;
-        obj.GetComponent<Decal>().Init(1.5f);
         Destroy(gameObject);
     }
 
@@ -56,7 +55,6 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
     {
         GameObject obj = Instantiate(decal);
         obj.transform.position = transform.position;
-        obj.GetComponent<Decal>().Init(1.5f);
         Destroy(gameObject);
     }
 
