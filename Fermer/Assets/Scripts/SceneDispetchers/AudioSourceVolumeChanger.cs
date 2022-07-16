@@ -17,35 +17,23 @@ public class AudioSourceVolumeChanger : MonoBehaviour
     private AudioSource source;
     private bool usePause;
 
-    private void Awake()
+    private void Start()
     {
         source = GetComponent<AudioSource>();
+
         switch (type)
         {
-            case AudioSourceChangerType.Music:
-                GameController.MUSIC_CHANGED.AddListener(ChangeVolume);
-                break;
             case AudioSourceChangerType.Sound:
                 GameController.SOUNDS_CHANGED.AddListener(ChangeVolume);
+                source.volume = PlayerPrefs.GetFloat("Sounds", 0.25f);
+                break;
+            case AudioSourceChangerType.Music:
+                GameController.MUSIC_CHANGED.AddListener(ChangeVolume);
+                source.volume = PlayerPrefs.GetFloat("Music", 0.3f);
                 break;
             case AudioSourceChangerType.Voice:
                 GameController.VOICE_CHANGED.AddListener(ChangeVolume);
                 GameController.PAUSE.AddListener(OnPause);
-                break;
-        }
-    }
-
-    private void Start()
-    {
-        switch (type)
-        {
-            case AudioSourceChangerType.Sound:
-                source.volume = PlayerPrefs.GetFloat("Sounds", 0.25f);
-                break;
-            case AudioSourceChangerType.Music:
-                source.volume = PlayerPrefs.GetFloat("Music", 0.3f);
-                break;
-            case AudioSourceChangerType.Voice:
                 source.volume = PlayerPrefs.GetFloat("Voices", 1);
                 break;
             default:
@@ -74,7 +62,6 @@ public class AudioSourceVolumeChanger : MonoBehaviour
                 source.Play();
                 usePause = false;
             }
-
         }
     }
 }
