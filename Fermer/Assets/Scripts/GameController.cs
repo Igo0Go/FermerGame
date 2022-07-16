@@ -40,6 +40,8 @@ public static class GameController
     public static UnityEvent<int> TAKE_BONUS_DAMAGE { get; private set; }
     public static UnityEvent<int> TAKE_BONUS_INVULNERABLE { get; private set; }
 
+    public static UnityEvent<string> PLAYER_MUSIC_CHANGED { get; private set; }
+
     public static bool toArena;
 
 
@@ -85,5 +87,7 @@ public static class GameController
         TAKE_BONUS_SPEED  = new UnityEvent<int>();
         TAKE_BONUS_DAMAGE = new UnityEvent<int>();
         TAKE_BONUS_INVULNERABLE = new UnityEvent<int>();
+
+        PLAYER_MUSIC_CHANGED = new UnityEvent<string>();
     }
 }

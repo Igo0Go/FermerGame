@@ -12,14 +12,13 @@ public class SceneController : MonoBehaviour
     public Transform lootSpawnPoint;
     public List<GameObject> randomBots;
     public List<Transform> randomSpawnPoints;
-    public AudioSource musicSource;
-    public List<AudioClip> randomMusic;
     public List<ReplicItem> randomReplic;
 
     public GameObject airBot;
     public List<Transform> pointsInAir;
     public List<ReplicPointScript> replicPoints;
 
+    [SerializeField] private MusicPlayer musicPlayer;
     [SerializeField] private List<GameObject> alarmBots;
     [SerializeField] private AudioClip alarmMusic;
     [SerializeField] private ReplicItem alarmFinalReplica;
@@ -34,7 +33,6 @@ public class SceneController : MonoBehaviour
 
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
-    private int currentMusicIndex;
     [SerializeField]
     private List<GameObject> currentWave;
     private bool rayToLast;
@@ -43,8 +41,6 @@ public class SceneController : MonoBehaviour
 
     private bool needKillEnemies;
     private bool needListenDialogue;
-
-    private readonly string musicFolderPath = Path.Combine(Application.streamingAssetsPath, "Music");
 
     private void Awake()
     {
@@ -57,10 +53,6 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
-        if (TryLoadPlayerMusic(out List<AudioClip> clips))
-        {
-            randomMusic = clips;
-        }
         Setup();
     }
 
@@ -92,14 +84,13 @@ public class SceneController : MonoBehaviour
 
     public void OnPlayerEntered()
     {
-        NextMusic();
-
         replicDispether.replicasEnd.AddListener(OnDialogueEnd);
 
         GameController.toArena = true;
         Destroy(GetComponent<BoxCollider>());
 
-        currentMusicIndex = -1;
+        musicPlayer.StartPlayList();
+
         needKillEnemies = needListenDialogue = false;
         CheckWave();
     }
@@ -198,6 +189,8 @@ public class SceneController : MonoBehaviour
     }
     public void Alarm()
     {
+        musicPlayer.StopAllAndStartThisClipAsLoop(alarmMusic);
+
         alarm = true;
         if(controlMovingCubes)
         {
@@ -209,12 +202,6 @@ public class SceneController : MonoBehaviour
             currentWave.Add(Instantiate(item, 
                 randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
         }
-        if (musicSource.isPlaying)
-        {
-            musicSource.Stop();
-        }
-        musicSource.clip = alarmMusic;
-        musicSource.Play();
     }
     private void FinalAlarm()
     {
@@ -292,52 +279,6 @@ public class SceneController : MonoBehaviour
         transitCamera.SetActive(true);
     }
 
-    private void NextMusic()
-    {
-        if (!alarm)
-        {
-            if (musicSource.isPlaying)
-            {
-                musicSource.Stop();
-            }
-            currentMusicIndex++;
-            if (currentMusicIndex >= randomMusic.Count) currentMusicIndex = 0;
-            musicSource.clip = randomMusic[currentMusicIndex];
-            musicSource.Play();
-            Invoke(nameof(NextMusic), musicSource.clip.length + 1);
-        }
-    }
-    private bool TryLoadPlayerMusic(out List<AudioClip> audioClips)
-    {
-        try
-        {
-            audioClips = null;
-            string[] files = Directory.GetFiles(musicFolderPath);
-            if (files.Length == 0)
-            {
-                return false;
-            }
-            audioClips = new List<AudioClip>();
-
-            DirectoryInfo di = new DirectoryInfo(musicFolderPath);
-            FileInfo[] UserFiles = di.GetFiles("*.ogg", SearchOption.TopDirectoryOnly);
-            if (UserFiles.Length > 0)// если массив не пуст
-            {
-                for (int i = 0; i < UserFiles.Length; i++)
-                {
-                    WWW www = new WWW(Path.Combine(musicFolderPath, UserFiles[i].Name));
-                    AudioClip clip = www.GetAudioClip(false, true, AudioType.OGGVORBIS);
-                    audioClips.Add(clip);
-                }
-            }
-        }
-        catch
-        {
-            audioClips = null;
-            return false;
-        }
-        return true;
-    }
 
     private IEnumerator KillWaveCoroutine()
     {

@@ -30,6 +30,9 @@ public class UIDispetcher : MonoBehaviour
     [SerializeField] private Slider damageBonusSlider;
     [SerializeField] private Slider invilnvurableBonusSlider;
 
+    [SerializeField] private GameObject musicPalyerPanel;
+    [SerializeField] private Text musicClipName;
+
     [SerializeField]
     [Tooltip("0 - влево, 1 - вправо")]
     private List<GameObject> sprintMarkers;
@@ -89,6 +92,7 @@ public class UIDispetcher : MonoBehaviour
         GameController.STOP_SPRINT.AddListener(DisableAllSprintEffects);
         GameController.ENEMY_DEAD.AddListener(OnEnemyDead);
         GameController.START_FINAL_LOADING.AddListener(StartBlackPanelCoroutine);
+        GameController.PLAYER_MUSIC_CHANGED.AddListener(OnChangeMusicClip);
 
         PlayerPrefs.DeleteAll();
         PlayerPrefs.SetFloat("Mouse", 0.5f);
@@ -123,6 +127,7 @@ public class UIDispetcher : MonoBehaviour
         opportunityToShowSettings = true;
 
         ConsoleEventCenter.ShowConsoleChanged.AddListener(SetPauseValue);
+        musicPalyerPanel.SetActive(false);
     }
 
     private void StartBlackPanelCoroutine()
@@ -299,6 +304,20 @@ public class UIDispetcher : MonoBehaviour
         hitMarker.SetActive(true);
         Invoke(nameof(ReturnHitMarker), 0.5f);
     }
+
+    private void OnChangeMusicClip(string clipName)
+    {
+        if(string.IsNullOrEmpty(clipName))
+        {
+            musicPalyerPanel.SetActive(false);
+        }
+        else
+        {
+            musicPalyerPanel.SetActive(true);
+            musicClipName.text = clipName;
+        }
+    }
+
     private void EnebleSprintEffect(Vector3 direction)
     {
         if(Mathf.Abs(direction.x) > Mathf.Abs(direction.z))
@@ -325,6 +344,8 @@ public class UIDispetcher : MonoBehaviour
             item.SetActive(false);
         }
     }
+
+
 
     public void SettingsPanelToggle()
     {
