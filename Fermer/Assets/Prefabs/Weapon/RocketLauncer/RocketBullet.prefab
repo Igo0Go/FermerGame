@@ -45,13 +45,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5429b26efe5f56489415286ab3967f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decal: {fileID: 1653712099042972719, guid: e58552ec2bf57954ca5079a779942b44, type: 3}
+  decal: {fileID: 1653712099042972719, guid: 35b65b7c379c2e64ca90f26b7ad884f5, type: 3}
   speed: 0
   damage: 0
   playerReact: 0
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 260
   targetTrakckingSpeed: 1
 --- !u!1001 &2174522606972618639
 PrefabInstance:

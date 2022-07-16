@@ -52,7 +52,6 @@ public class Bullet : MonoBehaviour //уничтожается при перво
         GameObject obj = Instantiate(decal);
         obj.transform.position = hit.point;
         obj.transform.forward = hit.normal;
-        obj.GetComponent<Decal>().Init(1);
         obj.transform.parent = hit.collider.transform;
 
         if (hit.collider.CompareTag("Enemy"))
@@ -106,7 +105,6 @@ public class Bullet : MonoBehaviour //уничтожается при перво
         GameObject obj = Instantiate(decal);
         obj.transform.position = hit.point;
         obj.transform.forward = hit.normal;
-        obj.GetComponent<Decal>().Init(1);
         obj.transform.parent = hit.collider.transform;
 
         Destroy(gameObject);

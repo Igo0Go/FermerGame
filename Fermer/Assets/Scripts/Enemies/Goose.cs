@@ -51,7 +51,7 @@ public class Goose : Enemy //Гусь с ракетной установкой (
             Vector3 dir = new Vector3(Random.Range(-0.05f, 0.05f), 2, Random.Range(-0.05f, 0.05f));
             Instantiate(afterFightLoot, transform.position + dir, Quaternion.identity).GetComponent<Rigidbody>()
                 .AddForce(dir, ForceMode.Impulse);
-            Instantiate(postDeadDecal, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
+            Instantiate(postDeadDecal, transform.position, Quaternion.identity);
             GameController.ENEMY_DEAD.Invoke();
             Destroy(gameObject);
         }

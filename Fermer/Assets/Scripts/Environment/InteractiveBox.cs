@@ -26,7 +26,7 @@ public class InteractiveBox : MonoBehaviour
             Instantiate(loot, transform.position + dir, Quaternion.identity).GetComponent<Rigidbody>()
                 .AddForce(dir, ForceMode.Impulse);
         }
-        Instantiate(wreckage, transform.position, Quaternion.identity).GetComponent<Decal>().Init(2);
+        Instantiate(wreckage, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 }

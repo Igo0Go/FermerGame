@@ -132,7 +132,7 @@ MonoBehaviour:
   playerReact: 0
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 374
 --- !u!1001 &5043933099963875429
 PrefabInstance:
   m_ObjectHideFlags: 0
