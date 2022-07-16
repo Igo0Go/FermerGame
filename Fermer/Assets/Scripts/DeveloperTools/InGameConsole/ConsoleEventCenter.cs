@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.Events;
 
 public static class ConsoleEventCenter
@@ -27,56 +25,56 @@ public static class ConsoleEventCenter
 
         Help = new DebugCommand("help", "показывает список доступных команд", "help");
 
-        ClearAllBonuses = new DebugCommand("clear_all_bonuses", "убирает эффекты всех бонусов", "clear_all_bonuses");
-        ClearAllBonuses.Execute.AddListener(() =>
+        Bonus = new DebugCommand<int>("bonus", "получить на неограниченное врем€ эффект бонуса bonus " +
+            "(1 - усиленный прыжок, " +
+            "2 - увеличенна€ скорость, " +
+            "3 - увеличенный урон, " +
+            "4 - неу€звимость, "+
+            "0 - сн€ть все",
+            "bonus [индекс]");
+        Bonus.Execute.AddListener((bonusType) =>
         {
-            GameController.TAKE_BONUS_JUMP.Invoke(1);
-            GameController.TAKE_BONUS_SPEED.Invoke(1);
-            GameController.TAKE_BONUS_DAMAGE.Invoke(1);
-            GameController.TAKE_BONUS_INVULNERABLE.Invoke(1);
-        }
-        );
-
-        GetBonusForEver = new DebugCommand<string>("get_bonus", "получить на неограниченное врем€ эффект бонуса bonus " +
-            "(jump - усиленный прыжок, " +
-            "speed - увеличенна€ скорость, " +
-            "damage - увеличенный урон, " +
-            "invulnerability - неу€звимость",
-            "get_bonus bonus");
-        GetBonusForEver.Execute.AddListener((bonusType) =>
-        {
-            if (bonusType.Equals("jump"))
+            switch (bonusType)
             {
-                GameController.TAKE_BONUS_JUMP.Invoke(3);
-            }
-            else if (bonusType.Equals("speed"))
-            {
-                GameController.TAKE_BONUS_SPEED.Invoke(3);
-            }
-            else if (bonusType.Equals("damage"))
-            {
-                GameController.TAKE_BONUS_DAMAGE.Invoke(3);
-            }
-            else if (bonusType.Equals("invulnerability"))
-            {
-                GameController.TAKE_BONUS_INVULNERABLE.Invoke(3);
+                case 0:
+                    GameController.TAKE_BONUS_JUMP.Invoke(1);
+                    GameController.TAKE_BONUS_SPEED.Invoke(1);
+                    GameController.TAKE_BONUS_DAMAGE.Invoke(1);
+                    GameController.TAKE_BONUS_INVULNERABLE.Invoke(1);
+                    break;
+                case 1:
+                    GameController.TAKE_BONUS_JUMP.Invoke(3);
+                    break;
+                case 2:
+                    GameController.TAKE_BONUS_SPEED.Invoke(3);
+                    break;
+                case 3:
+                    GameController.TAKE_BONUS_DAMAGE.Invoke(3);
+                    break;
+                case 4:
+                    GameController.TAKE_BONUS_INVULNERABLE.Invoke(3);
+                    break;
+                default:
+                    break;
             }
         });
 
-        TeleportToArena = new DebugCommand("tp_to_arena", "пропустить обучение и телепортироватьс€ к арене", "tp_to_arena");
+        Teleport = new DebugCommand<string>("tp", "“елепорт с сохранением точки дл€ рестарта", "tp [point]");
 
         KillWave = new DebugCommand("kill_wave", "если идЄт волна, убивает всех врагов", "kill_wave");
+
+        Gun = new DebugCommand<int>("gun", "получить оружие c 1000 боезапаса: (" +
+            "1 - пистолет, 2 - дробовик, 3 ракетницу, 4 - плазмопушку)", "gun [индекс]");
 
         commandList = new List<BaseDebugCommand>()
         {
             Help,
-            ClearAllBonuses,
-            GetBonusForEver,
-            TeleportToArena,
-            KillWave
+            Bonus,
+            Teleport,
+            KillWave,
+            Gun
         };
     }
-
 
     #region Commands
 
@@ -84,11 +82,11 @@ public static class ConsoleEventCenter
 
     public static DebugCommand Help;
 
-    public static DebugCommand<string> GetBonusForEver;
+    public static DebugCommand<int> Bonus;
 
-    public static DebugCommand ClearAllBonuses;
+    public static DebugCommand<int> Gun;
 
-    public static DebugCommand TeleportToArena;
+    public static DebugCommand<string> Teleport;
 
     public static DebugCommand KillWave;
 

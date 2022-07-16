@@ -22,6 +22,8 @@ public class PlayerInventory : MonoBehaviour
         GameController.RETURN_TO_DEFAULT.AddListener(OnReturnToDefault);
         GameController.START_FINAL_LOADING.AddListener(HideAllWeapon);
 
+        ConsoleEventCenter.Gun.Execute.AddListener(OnConsoleGunCommand);
+
         foreach (var item in weapons)
         {
             item.pack.open = false;
@@ -104,6 +106,20 @@ public class PlayerInventory : MonoBehaviour
         PlayerBonusStat.bonusPack[BonusType.Damage] = value;
     }
     private void HideAllWeapon() => CheckWeaponForChange(-1);
+
+    private void OnConsoleGunCommand(int value)
+    {
+        value--;
+
+        if(value >= 0 && value < 4)
+        {
+            Debug.Log("Оружие " + value + " добавлено");
+            weapons[value].pack.open = true;
+            weapons[value].pack.maxAmmo = 1000;
+            weapons[value].pack.currentAmmo = 1000;
+            CheckWeaponForChange(value);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {

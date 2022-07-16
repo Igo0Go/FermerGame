@@ -92,21 +92,35 @@ public class InGameConsole : MonoBehaviour
                 if (baseCommand is DebugCommand command)
                 {
                     command.Invoke();
+                    return;
                 }
-                else if (baseCommand is DebugCommand<int> intCommand)
+
+
+                if (properties.Length < 2)
+                    return;
+
+                if (string.IsNullOrEmpty(properties[1]))
+                    return;
+
+                if (baseCommand is DebugCommand<int> intCommand)
+                {
+                    if (int.TryParse(properties[1], out int param))
+                    {
+                        intCommand.Invoke(param);
+                        return;
+                    }
+                }
+
+                if (baseCommand is DebugCommand<string> stringCommand)
                 {
                     if (properties[1] != null)
                     {
-                        intCommand.Invoke(int.Parse(properties[1]));
-                    }
-                }
-                else if (baseCommand is DebugCommand<string> stringCommand)
-                {
-                    if(properties[1] != null)
-                    {
                         stringCommand.Invoke(properties[1]);
+                        return;
                     }
                 }
+
+
             }
         }
     }
