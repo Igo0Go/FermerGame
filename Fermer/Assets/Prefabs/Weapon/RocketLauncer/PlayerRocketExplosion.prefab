@@ -14631,5 +14631,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   force: 20
-  scaleChangeSpeed: 20
-  maxRange: 10
+  scaleChangeSpeed: 4
+  maxRange: 15

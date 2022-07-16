@@ -17706,6 +17706,12 @@ PrefabInstance:
       objectReference: {fileID: 1690383366}
     - target: {fileID: 5445313396460108824, guid: 9481324639b5bca49a966b41a82c25c0,
         type: 3}
+      propertyPath: teleportPrefab
+      value: 
+      objectReference: {fileID: 3645876423466615093, guid: e2f01ef7ca6a8b34487e65731017cc32,
+        type: 3}
+    - target: {fileID: 5445313396460108824, guid: 9481324639b5bca49a966b41a82c25c0,
+        type: 3}
       propertyPath: arenaController
       value: 
       objectReference: {fileID: 1803461948}

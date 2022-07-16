@@ -18,6 +18,7 @@ public class SceneController : MonoBehaviour
     public List<Transform> pointsInAir;
     public List<ReplicPointScript> replicPoints;
 
+    [SerializeField] private GameObject teleportPrefab;
     [SerializeField] private MusicPlayer musicPlayer;
     [SerializeField] private List<GameObject> alarmBots;
     [SerializeField] private AudioClip alarmMusic;
@@ -39,6 +40,7 @@ public class SceneController : MonoBehaviour
     private bool controlMovingCubes;
     private bool alarm;
 
+    private bool spawnCompleted;
     private bool needKillEnemies;
     private bool needListenDialogue;
 
@@ -115,11 +117,11 @@ public class SceneController : MonoBehaviour
             currentWave.Remove(enemy);
         }
 
-        if (currentWave.Count == 1)
+        if (currentWave.Count == 1 && spawnCompleted)
         {
             StartCoroutine(RayToLastCoroutine());
         }
-        if (currentWave.Count == 0)
+        if (currentWave.Count == 0 && spawnCompleted)
         {
             rayToLast = false;
             needKillEnemies = false;
@@ -137,20 +139,27 @@ public class SceneController : MonoBehaviour
 
     private void CheckWave()
     {
+        spawnCompleted = false;
         needListenDialogue = needKillEnemies = true;
         rayToLast = false;
+        currentWave = new List<GameObject>();
         currentWaveNumber++;
         GameController.NEXT_WAVE.Invoke(currentWaveNumber);
         replicDispether.replicasEnd.AddListener(OnDialogueEnd);
         GameObject obj = null;
         if (!alarm)
         {
-
             if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
             {
-                obj = Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
+                if(waves[currentWaveNumber].spawnPrefab.TryGetComponent(out Enemy e))
+                {
+                    StartCoroutine(SpawnEnemyCoroutine(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position));
+                }
+                else
+                {
+                    Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
+                }
             }
-            currentWave = null;
 
             if (currentWaveNumber < waves.Count)
             {
@@ -196,12 +205,12 @@ public class SceneController : MonoBehaviour
         {
             arenaController.AllToDefault();
         }
-        currentWave = new List<GameObject>();
         foreach (var item in alarmBots)
         {
             currentWave.Add(Instantiate(item, 
                 randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
         }
+        spawnCompleted = true;
     }
     private void FinalAlarm()
     {
@@ -240,12 +249,7 @@ public class SceneController : MonoBehaviour
     }
     private void SpawnEnemies(List<GameObject> enemies)
     {
-        currentWave = new List<GameObject>();
-        foreach (var item in enemies)
-        {
-            currentWave.Add(Instantiate(item,
-                randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position, Quaternion.identity));
-        }
+        StartCoroutine(SpawnEnemyWaveCoroutine(enemies));
     }
     private void SpawnAirBots()
     {
@@ -279,6 +283,28 @@ public class SceneController : MonoBehaviour
         transitCamera.SetActive(true);
     }
 
+    private IEnumerator SpawnEnemyWaveCoroutine(List<GameObject> enemies)
+    {
+        foreach (var item in enemies)
+        {
+            Vector3 pos = randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position;
+
+            Instantiate(teleportPrefab, pos, Quaternion.identity);
+
+            yield return new WaitForSeconds(1);
+
+            currentWave.Add(Instantiate(item, pos, Quaternion.identity));
+        }
+        spawnCompleted = true;
+    }
+    private IEnumerator SpawnEnemyCoroutine(GameObject enemy, Vector3 pos)
+    {
+        Instantiate(teleportPrefab, pos, Quaternion.identity);
+
+        yield return new WaitForSeconds(1);
+
+        currentWave.Add(Instantiate(enemy, pos, Quaternion.identity));
+    }
 
     private IEnumerator KillWaveCoroutine()
     {
