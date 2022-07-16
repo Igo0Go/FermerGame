@@ -44,6 +44,11 @@ public static class GameController
 
     public static bool toArena;
 
+    public static float MusicVolume = 0.4f;
+    public static float SoundsVolume = 0.25f;
+    public static float VoicesVolume = 1;
+    public static float MouseSensivity = 0.5f;
+
 
     static GameController()
     {

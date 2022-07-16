@@ -94,16 +94,8 @@ public class UIDispetcher : MonoBehaviour
         GameController.START_FINAL_LOADING.AddListener(StartBlackPanelCoroutine);
         GameController.PLAYER_MUSIC_CHANGED.AddListener(OnChangeMusicClip);
 
-        PlayerPrefs.DeleteAll();
-        PlayerPrefs.SetFloat("Mouse", 0.5f);
-        PlayerPrefs.SetFloat("Music", 0.25f);
-        PlayerPrefs.SetFloat("Sounds", 0.15f);
-        PlayerPrefs.SetFloat("Voices", 1);
-
         settingsPanel.SetActive(true);
-        OnLoad();
-        OnMusicValueChanged();
-        OnSoundsValueChanged();
+
         SettingsPanelToggle();
         score = 0;
         OnChangeScore(0);
@@ -112,10 +104,10 @@ public class UIDispetcher : MonoBehaviour
         finalPanel.SetActive(false);
         healthSlider.value = healthSlider.maxValue;
         waveCounterText.text = string.Empty;
-        mouseSlider.value = PlayerPrefs.GetFloat("Mouse", 0.5f);
-        musicVolumeSlider.value = PlayerPrefs.GetFloat("Music", 0.25f);
-        soundsVolumeSlider.value = PlayerPrefs.GetFloat("Sounds", 0.25f);
-        voiceVolumeSlider.value = PlayerPrefs.GetFloat("Voices", 1);
+        mouseSlider.value = GameController.MouseSensivity;
+        musicVolumeSlider.value = GameController.MusicVolume;
+        soundsVolumeSlider.value = GameController.SoundsVolume;
+        voiceVolumeSlider.value = GameController.VoicesVolume;
 
         DisableAllSprintEffects();
 
@@ -270,21 +262,22 @@ public class UIDispetcher : MonoBehaviour
     }
     public void OnMusicValueChanged()
     {
-        PlayerPrefs.SetFloat("Music", musicVolumeSlider.value);
+        GameController.MusicVolume = musicVolumeSlider.value;
         GameController.MUSIC_CHANGED.Invoke(musicVolumeSlider.value);
     }
     public void OnSoundsValueChanged()
     {
-        PlayerPrefs.SetFloat("Sounds", soundsVolumeSlider.value);
+        GameController.SoundsVolume = soundsVolumeSlider.value;
         GameController.SOUNDS_CHANGED.Invoke(soundsVolumeSlider.value);
     }
     public void OnVoiceValueChanged()
     {
-        PlayerPrefs.SetFloat("Voices", voiceVolumeSlider.value);
+        GameController.VoicesVolume = voiceVolumeSlider.value;
         GameController.VOICE_CHANGED.Invoke(voiceVolumeSlider.value);
     }
     public void OnMouseValueChanged()
     {
+        GameController.MouseSensivity = mouseSlider.value;
         GameController.MOUSE_CHANGED.Invoke(mouseSlider.value);
     }
     private void OnChangeScore(int value)
@@ -379,13 +372,6 @@ public class UIDispetcher : MonoBehaviour
                 return true;
         }
         return false;
-    }
-    
-    private void OnLoad()
-    {
-        musicVolumeSlider.value = PlayerPrefs.GetFloat("Music", 0.5f);
-        soundsVolumeSlider.value = PlayerPrefs.GetFloat("Sounds", 0.5f);
-        voiceVolumeSlider.value = PlayerPrefs.GetFloat("Voices", 1);
     }
 
     private void CheckSliders()

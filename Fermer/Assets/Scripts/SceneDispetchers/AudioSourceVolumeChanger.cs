@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum AudioSourceChangerType
 {
@@ -25,16 +23,16 @@ public class AudioSourceVolumeChanger : MonoBehaviour
         {
             case AudioSourceChangerType.Sound:
                 GameController.SOUNDS_CHANGED.AddListener(ChangeVolume);
-                source.volume = PlayerPrefs.GetFloat("Sounds", 0.25f);
+                source.volume = GameController.SoundsVolume;
                 break;
             case AudioSourceChangerType.Music:
                 GameController.MUSIC_CHANGED.AddListener(ChangeVolume);
-                source.volume = PlayerPrefs.GetFloat("Music", 0.3f);
+                source.volume = GameController.MusicVolume;
                 break;
             case AudioSourceChangerType.Voice:
                 GameController.VOICE_CHANGED.AddListener(ChangeVolume);
                 GameController.PAUSE.AddListener(OnPause);
-                source.volume = PlayerPrefs.GetFloat("Voices", 1);
+                source.volume = GameController.VoicesVolume;
                 break;
             default:
                 break;
