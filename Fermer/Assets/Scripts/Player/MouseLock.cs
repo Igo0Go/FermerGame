@@ -37,7 +37,7 @@ public class MouseLock : MonoBehaviour
        
         lookPoint.parent = transform;
         GetComponent<PlayerInventory>().SetLookPoint(lookPoint);
-        sensivityMultiplicator = PlayerPrefs.GetFloat("Mouse", 0.5f);
+        sensivityMultiplicator = GameController.MouseSensivity;
     }
     void LateUpdate()
     {
@@ -76,6 +76,5 @@ public class MouseLock : MonoBehaviour
     private void OnChangeMouse(float value)
     {
         sensivityMultiplicator = value;
-        PlayerPrefs.SetFloat("Mouse", sensivityMultiplicator);
     }
 }
