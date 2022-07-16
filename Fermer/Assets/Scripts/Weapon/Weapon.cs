@@ -9,7 +9,8 @@ public abstract class Weapon : MonoBehaviour
     public GameObject bullet;
     [Range(1, 200)] public float bulletSpeed = 20;
     [Range(1, 100)] public int damage = 15;
-    
+
+    public Animator anim;
     [SerializeField] protected Transform shootPoint;
     public LayerMask ignoreMask;
     [SerializeField] protected AudioSource source;
@@ -19,7 +20,6 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] private WeaponType type;
     
     [HideInInspector] public Transform lookPoint;
-    [HideInInspector] public Animator anim;
     [HideInInspector] public bool opportunityToShoot;
 
     private bool opportunityToFight;
@@ -28,7 +28,6 @@ public abstract class Weapon : MonoBehaviour
     void Awake()
     {
         GameController.PAUSE.AddListener(OnPause);
-        anim = GetComponent<Animator>();
     }
 
     //каждое оружие имеет основной и альтернативный режим стрельбы
