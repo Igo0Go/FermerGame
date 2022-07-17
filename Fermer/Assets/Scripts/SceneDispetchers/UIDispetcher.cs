@@ -32,6 +32,7 @@ public class UIDispetcher : MonoBehaviour
 
     [SerializeField] private GameObject musicPalyerPanel;
     [SerializeField] private Text musicClipName;
+    [SerializeField] private Text musicClipNameForLoading;
 
     [SerializeField]
     [Tooltip("0 - влево, 1 - вправо")]
@@ -93,6 +94,11 @@ public class UIDispetcher : MonoBehaviour
         GameController.ENEMY_DEAD.AddListener(OnEnemyDead);
         GameController.START_FINAL_LOADING.AddListener(StartBlackPanelCoroutine);
         GameController.PLAYER_MUSIC_CHANGED.AddListener(OnChangeMusicClip);
+        GameController.PLAYER_MUSIC_LOAD_CLIP_COMPLETED.AddListener(OnClipLoaded);
+        GameController.PLAYER_MUSIC_LOADED.AddListener(OnAllMusicLoaded);
+
+        blackPanel.gameObject.SetActive(true);
+        blackPanel.color = Color.black;
 
         settingsPanel.SetActive(true);
 
@@ -124,21 +130,28 @@ public class UIDispetcher : MonoBehaviour
 
     private void StartBlackPanelCoroutine()
     {
-        Destroy(gameObject, 7);
-        blackPanel.gameObject.SetActive(true);
-        StartCoroutine(BlackPanelCoroutine());
+        Destroy(gameObject, 7.5f);
+        StartCoroutine(BlackPanelCoroutine(true));
     }
 
-    private IEnumerator BlackPanelCoroutine()
+    private IEnumerator BlackPanelCoroutine(bool toBlack)
     {
-        Color bufer = blackPanel.color;
+        Color alpha = new Color(0,0,0,0);
         float t = 0;
-        while(blackPanel.color.a < 255)
+        while(t < 1)
         {
             t += Time.deltaTime / 5;
-            blackPanel.color = Color.Lerp(bufer, Color.black, t);
+            if (toBlack)
+            {
+                blackPanel.color = Color.Lerp(alpha, Color.black, t);
+            }
+            else
+            {
+                blackPanel.color = Color.Lerp(Color.black, alpha, t);
+            }
             yield return null;
         }
+        blackPanel.color = toBlack ? Color.black : alpha;
     }
 
     private void OnNextWave(int number)
@@ -310,6 +323,15 @@ public class UIDispetcher : MonoBehaviour
             musicClipName.text = clipName;
         }
     }
+    private void OnClipLoaded(string clipName)
+    {
+        musicClipNameForLoading.text = "загружено: " + clipName;
+    }
+    private void OnAllMusicLoaded()
+    {
+        musicClipNameForLoading.gameObject.SetActive(false);
+        StartCoroutine(BlackPanelCoroutine(false));
+    }
 
     private void EnebleSprintEffect(Vector3 direction)
     {
@@ -337,8 +359,6 @@ public class UIDispetcher : MonoBehaviour
             item.SetActive(false);
         }
     }
-
-
 
     public void SettingsPanelToggle()
     {

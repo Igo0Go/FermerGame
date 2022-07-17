@@ -1,5 +1,6 @@
 using UnityEngine.Events;
 using UnityEngine;
+using System.Collections.Generic;
 
 public static class GameController
 {
@@ -38,10 +39,14 @@ public static class GameController
     public static UnityEvent<int> TAKE_BONUS_DAMAGE { get; private set; }
     public static UnityEvent<int> TAKE_BONUS_INVULNERABLE { get; private set; }
 
+    public static UnityEvent PLAYER_MUSIC_LOADED { get; private set; }
+    public static UnityEvent<string> PLAYER_MUSIC_LOAD_CLIP_COMPLETED { get; private set; }
     public static UnityEvent<string> PLAYER_MUSIC_CHANGED { get; private set; }
 
     public static bool toArena;
     public static bool useSubTitles = true;
+
+    public static List<AudioClip> playerMusic;
 
     public static float MusicVolume = 0.4f;
     public static float SoundsVolume = 0.25f;
@@ -93,5 +98,7 @@ public static class GameController
         TAKE_BONUS_INVULNERABLE = new UnityEvent<int>();
 
         PLAYER_MUSIC_CHANGED = new UnityEvent<string>();
+        PLAYER_MUSIC_LOAD_CLIP_COMPLETED = new UnityEvent<string>();
+        PLAYER_MUSIC_LOADED = new UnityEvent();
     }
 }

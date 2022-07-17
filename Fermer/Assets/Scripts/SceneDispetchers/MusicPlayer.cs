@@ -4,11 +4,6 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.Networking;
 
-public static class PlayerMusicDataHolder
-{
-    public static List<AudioClip> playerMusic;
-}
-
 public class MusicPlayer : MonoBehaviour
 {
     [SerializeField]
@@ -56,13 +51,12 @@ public class MusicPlayer : MonoBehaviour
 
     private IEnumerator TryLoadPlayerMusic()
     {
-        if(PlayerMusicDataHolder.playerMusic == null || PlayerMusicDataHolder.playerMusic.Count == 0)
+        if(GameController.playerMusic == null || GameController.playerMusic.Count == 0)
         {
             string[] files = Directory.GetFiles(musicFolderPath);
             if (files.Length > 0)
             {
-
-                PlayerMusicDataHolder.playerMusic = new List<AudioClip>();
+                GameController.playerMusic = new List<AudioClip>();
 
                 DirectoryInfo di = new DirectoryInfo(musicFolderPath);
                 FileInfo[] UserFiles = di.GetFiles("*.ogg", SearchOption.TopDirectoryOnly);
@@ -84,12 +78,14 @@ public class MusicPlayer : MonoBehaviour
                         {
                             var data = DownloadHandlerAudioClip.GetContent(www);
                             AudioClip clip = data;
-                            clip.name = UserFiles[i].Name.Split('.')[0];
-                            PlayerMusicDataHolder.playerMusic.Add(clip);
+                            string clipName = UserFiles[i].Name.Split('.')[0];
+                            clip.name = clipName;
+                            GameController.playerMusic.Add(clip);
+                            GameController.PLAYER_MUSIC_LOAD_CLIP_COMPLETED.Invoke(clipName);
                         }
                         else
                         {
-                            PlayerMusicDataHolder.playerMusic = null;
+                            GameController.playerMusic = null;
                             break;
                         }
                     }
@@ -97,12 +93,14 @@ public class MusicPlayer : MonoBehaviour
             }
         }
 
-        if (PlayerMusicDataHolder.playerMusic != null && PlayerMusicDataHolder.playerMusic.Count > 0)
+        if (GameController.playerMusic != null && GameController.playerMusic.Count > 0)
         {
             Debug.Log("Вся музыка загружена");
-            musicList = PlayerMusicDataHolder.playerMusic;
+            musicList = GameController.playerMusic;
             usePlayerMusic = true;
         }
+
+        GameController.PLAYER_MUSIC_LOADED.Invoke();
     }
 
     private void StartPlayMusic(AudioClip clip)
