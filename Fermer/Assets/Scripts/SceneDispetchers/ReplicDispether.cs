@@ -22,6 +22,7 @@ public class ReplicDispether : MonoBehaviour
     private void Awake()
     {
         replicasEnd = new UnityEvent();
+        useTextToggle.isOn = GameController.useSubTitles;
         bufer = null;
     }
 
@@ -38,8 +39,9 @@ public class ReplicDispether : MonoBehaviour
     {
         if(bufer != null)
         {
-            replicPanel.SetActive(useTextToggle.isOn);
-            if (useTextToggle.isOn)
+            GameController.useSubTitles = useTextToggle.isOn;
+            replicPanel.SetActive(GameController.useSubTitles);
+            if (GameController.useSubTitles)
             {
                 replicText.text = bufer.replicText;
                 replicText.color = bufer.textColor;
