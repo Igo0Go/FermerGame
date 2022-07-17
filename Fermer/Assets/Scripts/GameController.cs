@@ -41,6 +41,7 @@ public static class GameController
     public static UnityEvent<string> PLAYER_MUSIC_CHANGED { get; private set; }
 
     public static bool toArena;
+    public static bool useSubTitles = true;
 
     public static float MusicVolume = 0.4f;
     public static float SoundsVolume = 0.25f;
