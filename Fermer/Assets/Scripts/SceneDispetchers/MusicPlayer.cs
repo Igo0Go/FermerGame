@@ -26,7 +26,7 @@ public class MusicPlayer : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E) && !pause)
+        if(Input.GetKeyDown(KeyCode.E) && !pause && usePlayerMusic)
         {
             NextMusic();
         }
