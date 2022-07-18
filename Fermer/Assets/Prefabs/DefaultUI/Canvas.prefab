@@ -10662,6 +10662,9 @@ MonoBehaviour:
   musicPalyerPanel: {fileID: 2075533529}
   musicClipName: {fileID: 1940833503}
   musicClipNameForLoading: {fileID: 846761370}
+  bonusPanel: {fileID: 5605945983176212999}
+  weaponPanel: {fileID: 5605945985008120828}
+  WavePanel: {fileID: 7878165278986789516}
   sprintMarkers:
   - {fileID: 4078265881280134758}
   - {fileID: 6987807428953794795}
