@@ -34,6 +34,11 @@ public class UIDispetcher : MonoBehaviour
     [SerializeField] private Text musicClipName;
     [SerializeField] private Text musicClipNameForLoading;
 
+    [SerializeField] private GameObject bonusPanel;
+    [SerializeField] private GameObject weaponPanel;
+    [SerializeField] private GameObject WavePanel;
+
+
     [SerializeField]
     [Tooltip("0 - влево, 1 - вправо")]
     private List<GameObject> sprintMarkers;
@@ -77,22 +82,28 @@ public class UIDispetcher : MonoBehaviour
     {
         GameController.HIT.AddListener(OnHit);
         GameController.ENEMY_HIT.AddListener(OnChangeScore);
+        GameController.ENEMY_DEAD.AddListener(OnEnemyDead);
+
+        GameController.START_SPRINT.AddListener(EnebleSprintEffect);
+        GameController.STOP_SPRINT.AddListener(DisableAllSprintEffects);
         GameController.CHANGE_SPRINT_COUNT.AddListener(OnChangeSprint);
+
+        GameController.CHANGE_MAX_HEALTH.AddListener(OnChangeMaxHealth);
+        GameController.CHANGE_HEALTH.AddListener(OnChangeHealth);
+        GameController.PLAYER_DEAD.AddListener(OnPlayerDead);
+        GameController.DAMAGE_MARKER_ACTIVATE.AddListener(OnDamageMarkerActivate);
+
         GameController.WEAPON_ARE_CHANGED.AddListener(OnChangeWeapon);
         GameController.AMMO_ARE_CHANGED.AddListener(OnChangeAmmo);
-        GameController.CHANGE_HEALTH.AddListener(OnChangeHealth);
-        GameController.CHANGE_MAX_HEALTH.AddListener(OnChangeMaxHealth);
+
         GameController.TAKE_BONUS_JUMP.AddListener(OnTakeBonusJump);
         GameController.TAKE_BONUS_SPEED.AddListener(OnTakeBonusSpeed);
         GameController.TAKE_BONUS_DAMAGE.AddListener(OnTakeBonusDamage);
         GameController.TAKE_BONUS_INVULNERABLE.AddListener(OnTakeBonusInvulrable);
-        GameController.PLAYER_DEAD.AddListener(OnPlayerDead);
+
         GameController.NEXT_WAVE.AddListener(OnNextWave);
-        GameController.DAMAGE_MARKER_ACTIVATE.AddListener(OnDamageMarkerActivate);
-        GameController.START_SPRINT.AddListener(EnebleSprintEffect);
-        GameController.STOP_SPRINT.AddListener(DisableAllSprintEffects);
-        GameController.ENEMY_DEAD.AddListener(OnEnemyDead);
         GameController.START_FINAL_LOADING.AddListener(StartBlackPanelCoroutine);
+
         GameController.PLAYER_MUSIC_CHANGED.AddListener(OnChangeMusicClip);
         GameController.PLAYER_MUSIC_LOAD_CLIP_COMPLETED.AddListener(OnClipLoaded);
         GameController.PLAYER_MUSIC_LOADED.AddListener(OnAllMusicLoaded);
@@ -156,6 +167,7 @@ public class UIDispetcher : MonoBehaviour
 
     private void OnNextWave(int number)
     {
+        WavePanel.SetActive(true);
         waveCounterText.text = "ВОЛНА " + (number + 1);
     }
     private void OnEnemyDead()
@@ -192,6 +204,7 @@ public class UIDispetcher : MonoBehaviour
         }
         else
         {
+            bonusPanel.SetActive(true);
             jumpBonusSlider.gameObject.SetActive(true);
             jumpBonusSlider.maxValue = jumpBonusTime;
             jumpBonusSlider.value = jumpBonusTime;
@@ -205,6 +218,7 @@ public class UIDispetcher : MonoBehaviour
         }
         else
         {
+            bonusPanel.SetActive(true);
             speedBonusSlider.gameObject.SetActive(true);
             speedBonusSlider.maxValue = speedBonusTime;
             speedBonusSlider.value = speedBonusTime;
@@ -218,6 +232,7 @@ public class UIDispetcher : MonoBehaviour
         }
         else
         {
+            bonusPanel.SetActive(true);
             damageBonusSlider.gameObject.SetActive(true);
             damageBonusSlider.maxValue = damageBonusTime;
             damageBonusSlider.value = damageBonusTime;
@@ -232,6 +247,7 @@ public class UIDispetcher : MonoBehaviour
         }
         else
         {
+            bonusPanel.SetActive(true);
             damagePanelAnim.SetBool("NoDamaged", true);
             invilnvurableBonusSlider.gameObject.SetActive(true);
             invilnvurableBonusSlider.maxValue = invilnirableBonusTime;
@@ -241,6 +257,7 @@ public class UIDispetcher : MonoBehaviour
 
     private void OnChangeWeapon(int index)
     {
+        weaponPanel.SetActive(true);
         foreach (var item in weaponImages)
         {
             item.SetActive(false);
@@ -329,6 +346,9 @@ public class UIDispetcher : MonoBehaviour
     }
     private void OnAllMusicLoaded()
     {
+        WavePanel.SetActive(false);
+        weaponPanel.SetActive(false);
+        bonusPanel.SetActive(false);
         musicClipNameForLoading.gameObject.SetActive(false);
         StartCoroutine(BlackPanelCoroutine(false));
     }
