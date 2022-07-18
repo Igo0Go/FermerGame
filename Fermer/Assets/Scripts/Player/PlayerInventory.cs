@@ -9,6 +9,8 @@ public class PlayerInventory : MonoBehaviour
 
     private Transform lookpoint;
 
+    private bool opportunityToChangeWeapon;
+
     private void Update()
     {
         FastCheckWeapon();
@@ -23,6 +25,8 @@ public class PlayerInventory : MonoBehaviour
         GameController.START_FINAL_LOADING.AddListener(HideAllWeapon);
 
         ConsoleEventCenter.Gun.Execute.AddListener(OnConsoleGunCommand);
+
+        opportunityToChangeWeapon = false;
 
         foreach (var item in weapons)
         {
@@ -39,7 +43,8 @@ public class PlayerInventory : MonoBehaviour
     {
         if(number == -1)
         {
-            if(currentWeapon > 0)
+            opportunityToChangeWeapon = false;
+            if (currentWeapon > 0)
                 weapons[currentWeapon].HideWeapon();
             currentWeapon = -1;
             GameController.WEAPON_ARE_CHANGED.Invoke(-1);
@@ -47,6 +52,7 @@ public class PlayerInventory : MonoBehaviour
         }
         if (currentWeapon != number && weapons[number].pack.open)
         {
+            opportunityToChangeWeapon = false;
             if(currentWeapon >= 0)
                 weapons[currentWeapon].HideWeapon();
             else
@@ -70,27 +76,31 @@ public class PlayerInventory : MonoBehaviour
     }
     private void ReturnOpportunityToChangeWeapon()
     {
+        opportunityToChangeWeapon = true;
         weapons[currentWeapon].Init(lookpoint);
         GameController.WEAPON_ARE_CHANGED.Invoke(currentWeapon);
         GameController.AMMO_ARE_CHANGED.Invoke(weapons[currentWeapon].pack.currentAmmo);
     }
     private void FastCheckWeapon()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
+        if(opportunityToChangeWeapon)
         {
-            CheckWeaponForChange(0);
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            CheckWeaponForChange(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            CheckWeaponForChange(2);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            CheckWeaponForChange(3);
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                CheckWeaponForChange(0);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                CheckWeaponForChange(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                CheckWeaponForChange(2);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                CheckWeaponForChange(3);
+            }
         }
     }
 

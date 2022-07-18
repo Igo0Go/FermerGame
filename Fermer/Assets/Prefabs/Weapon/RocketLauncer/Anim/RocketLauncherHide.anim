@@ -680,7 +680,7 @@ AnimationClip:
   m_HasGenericRootTransform: 1
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.75
+  - time: 0.81666666
     functionName: OnHideWeapon
     data: 
     objectReferenceParameter: {fileID: 0}
