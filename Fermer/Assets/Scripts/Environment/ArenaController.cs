@@ -25,7 +25,7 @@ public class ArenaController : MonoBehaviour
         foreach (var item in movingCubes)
         {
             item.loopMove = true;
-            item.SetSpeed(Random.Range(1f, 5f));
+            item.SetMovingTime(Random.Range(3f, 7f));
             item.ChangePosition();
             yield return null;
         }

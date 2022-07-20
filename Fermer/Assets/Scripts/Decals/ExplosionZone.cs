@@ -26,7 +26,7 @@ public class ExplosionZone : MonoBehaviour
         {
             t += Time.deltaTime * scaleChangeSpeed;
             MyTransform.localScale = Vector3.one * t;
-            MyTransform.Rotate(Vector3.up, 10 * scaleChangeSpeed);
+            MyTransform.Rotate(Vector3.up, 45 * Time.deltaTime);
             yield return null;
         }
 
@@ -34,7 +34,7 @@ public class ExplosionZone : MonoBehaviour
         {
             t -= Time.deltaTime * scaleChangeSpeed * 4;
             MyTransform.localScale = Vector3.one * t;
-            MyTransform.Rotate(Vector3.up, 10 * scaleChangeSpeed);
+            MyTransform.Rotate(Vector3.up, 45 * Time.deltaTime);
             yield return null;
         }
 

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class InputMove : MonoBehaviour
@@ -25,6 +23,8 @@ public class InputMove : MonoBehaviour
     private bool startup;
     private bool fall;
     private float fallTimer;
+
+    private const float coyote_time = 0.2f;
 
     private void Start()
     {
@@ -68,20 +68,23 @@ public class InputMove : MonoBehaviour
 
     private void Jump()
     {
-        if (charController.isGrounded)
+        if(charController.isGrounded)
         {
-            fallTimer = 0;
-            fall = true;
+            fall = false;
+            fallTimer = coyote_time;
+            vertSpeed = minFall;
+        }
+
+        if (!fall && fallTimer > 0)
+        {
             if (Input.GetButtonDown("Jump"))
             {
                 vertSpeed = jumpForce;
-            }
-            else
-            { 
-                vertSpeed = minFall;
+                fall = true;
             }
         }
-        else
+
+        if(!charController.isGrounded)
         {
             if (fall)
             {
@@ -94,7 +97,7 @@ public class InputMove : MonoBehaviour
             else
             {
                 fallTimer -= Time.deltaTime;
-                if(fallTimer <= 0)
+                if (fallTimer <= 0)
                 {
                     fallTimer = 0;
                     fall = true;

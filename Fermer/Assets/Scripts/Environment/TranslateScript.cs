@@ -1,77 +1,94 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TranslateScript : MonoBehaviour
 {
-    [SerializeField, Range(1, 10)]private float speed = 1;
+    [SerializeField, Range(1, 10)]private float moveTime = 1;
     [SerializeField, Range(0, 10)] private float delay = 0;
     [SerializeField] private Vector3 offsetPos;
     [SerializeField, Space(10)] private bool debug;
     public bool loopMove = false;
 
-    private Vector3 startPos;
-    private Vector3 targetPos;
-    Vector3 dir;
-    private int multiplicator = 1;
-    private bool move;
+    private bool toEndPoint;
+    private float t = 0;
 
-    private float DistanceToTarget => Vector3.Distance(transform.position, targetPos);
+    private Vector3 startPos;
+    private Vector3 endPoint;
 
     void Start()
     {
         startPos = transform.position;
-    }
-    void Update()
-    {
-        if (move)
-            MoveToTarget();
+        endPoint = startPos + offsetPos;
+        toEndPoint = false;
+        t = 0;
     }
 
-    public void SetSpeed(float newSpeed)
+    public void SetMovingTime(float newSpeed)
     {
         if(newSpeed < 0)
         {
             newSpeed *= -1;
         }
-        speed = newSpeed;
+        moveTime = newSpeed;
     }
 
     public void ToDefaultPos()
     {
-        targetPos = startPos;
-        dir = targetPos - transform.position;
-        multiplicator = 1;
-        move = true;
         loopMove = false;
+        toEndPoint = false;
+        StopAllCoroutines();
+        StartCoroutine(MoveToStartCoroutine());
     }
 
     public void ChangePosition()
     {
-        Invoke("SetTargetPos", delay);
-    }
-
-    private void SetTargetPos()
-    {
-        targetPos = transform.position + offsetPos * multiplicator;
-        multiplicator *= -1;
-        dir = targetPos - transform.position;
-        move = true;
-    }
-    private void MoveToTarget()
-    {
-        if(DistanceToTarget > speed * Time.deltaTime * 3)
+        StopAllCoroutines();
+        toEndPoint = !toEndPoint;
+        if(toEndPoint)
         {
-            transform.position += dir.normalized * speed * Time.deltaTime;
+            StartCoroutine(MoveToEndCoroutine());
         }
         else
         {
-            transform.position = targetPos;
-            move = false;
-            if(loopMove)
-            {
-                ChangePosition();
-            }
+            StartCoroutine(MoveToStartCoroutine());
+        }
+    }
+
+    private IEnumerator MoveToEndCoroutine()
+    {
+        yield return new WaitForSeconds(delay);
+
+        while (t<1)
+        {
+            t += Time.deltaTime/moveTime;
+            transform.position = Vector3.Lerp(startPos, endPoint, t);
+            yield return null;
+        }
+
+        transform.position = endPoint;
+        t = 1;
+
+        if(loopMove)
+        {
+            ChangePosition();
+        }
+    }
+    private IEnumerator MoveToStartCoroutine()
+    {
+        yield return new WaitForSeconds(delay);
+        while (t > 0)
+        {
+            t -= Time.deltaTime/moveTime;
+            transform.position = Vector3.Lerp(startPos, endPoint, t);
+            yield return null;
+        }
+
+        transform.position = startPos;
+        t = 0;
+
+        if (loopMove)
+        {
+            ChangePosition();
         }
     }
 
@@ -81,45 +98,45 @@ public class TranslateScript : MonoBehaviour
         if(debug)
         {
             Gizmos.color = Color.cyan;
-                targetPos = transform.position + offsetPos;
+                endPoint = transform.position + offsetPos;
 
             //задняя грань
 
-            Vector3 start = targetPos
+            Vector3 start = endPoint
                 - transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 - transform.forward * transform.lossyScale.z / 2;
-            Vector3 end = targetPos
+            Vector3 end = endPoint
                 + transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 - transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                 + transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 - transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 + transform.right * transform.lossyScale.x / 2
                 + transform.up * transform.lossyScale.y / 2
                 - transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                + transform.right * transform.lossyScale.x / 2
                + transform.up * transform.lossyScale.y / 2
                - transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 - transform.right * transform.lossyScale.x / 2
                 + transform.up * transform.lossyScale.y / 2
                 - transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                - transform.right * transform.lossyScale.x / 2
                + transform.up * transform.lossyScale.y / 2
                - transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 - transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 - transform.forward * transform.lossyScale.z / 2;
@@ -127,41 +144,41 @@ public class TranslateScript : MonoBehaviour
 
             //боковые рёбра
 
-            start = targetPos
+            start = endPoint
                - transform.right * transform.lossyScale.x / 2
                - transform.up * transform.lossyScale.y / 2
                - transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 - transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                + transform.right * transform.lossyScale.x / 2
                - transform.up * transform.lossyScale.y / 2
                - transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 + transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                + transform.right * transform.lossyScale.x / 2
                + transform.up * transform.lossyScale.y / 2
                - transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 + transform.right * transform.lossyScale.x / 2
                 + transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                - transform.right * transform.lossyScale.x / 2
                + transform.up * transform.lossyScale.y / 2
                - transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 - transform.right * transform.lossyScale.x / 2
                 + transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;
@@ -169,41 +186,41 @@ public class TranslateScript : MonoBehaviour
 
             //передняя грань
 
-            start = targetPos
+            start = endPoint
                   - transform.right * transform.lossyScale.x / 2
                   - transform.up * transform.lossyScale.y / 2
                   + transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 + transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                 + transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 + transform.right * transform.lossyScale.x / 2
                 + transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                + transform.right * transform.lossyScale.x / 2
                + transform.up * transform.lossyScale.y / 2
                + transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 - transform.right * transform.lossyScale.x / 2
                 + transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;
             Gizmos.DrawLine(start, end);
 
-            start = targetPos
+            start = endPoint
                - transform.right * transform.lossyScale.x / 2
                + transform.up * transform.lossyScale.y / 2
                + transform.forward * transform.lossyScale.z / 2;
-            end = targetPos
+            end = endPoint
                 - transform.right * transform.lossyScale.x / 2
                 - transform.up * transform.lossyScale.y / 2
                 + transform.forward * transform.lossyScale.z / 2;

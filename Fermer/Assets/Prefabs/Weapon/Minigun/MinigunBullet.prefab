@@ -50,7 +50,7 @@ MonoBehaviour:
   playerReact: 0
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 260
+    m_Bits: 388
 --- !u!1001 &7324602438064758779
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -189,6 +189,14 @@ PrefabInstance:
     - target: {fileID: 19800002, guid: d8c41be67f41aa545ae053b0b927f821, type: 3}
       propertyPath: InitialModule.startLifetime.minMaxState
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19900000, guid: d8c41be67f41aa545ae053b0b927f821, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19900002, guid: d8c41be67f41aa545ae053b0b927f821, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 13500000, guid: d8c41be67f41aa545ae053b0b927f821, type: 3}

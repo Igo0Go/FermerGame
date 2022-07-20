@@ -585,6 +585,16 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 1952025961842522286, guid: 07ee9912d3775624f8b52097ffaf526c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.202
+      objectReference: {fileID: 0}
+    - target: {fileID: 1952025961842522286, guid: 07ee9912d3775624f8b52097ffaf526c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.086
+      objectReference: {fileID: 0}
     - target: {fileID: 1952025961878473312, guid: 07ee9912d3775624f8b52097ffaf526c,
         type: 3}
       propertyPath: m_CastShadows

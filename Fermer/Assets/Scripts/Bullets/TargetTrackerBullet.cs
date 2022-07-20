@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TargetTrackerBullet : Bullet //Снаряд, который доворачивается к цели при полёте
 {
@@ -23,11 +21,10 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
 
     public override void Hit(RaycastHit hit)
     {
-
         if (hit.collider.CompareTag("Enemy"))
         {
-            //AliveController character = hit.collider.GetComponent<AliveController>();
-            //character.GetDamage(damage);
+            AliveController character = hit.collider.GetComponent<AliveController>();
+            character.GetDamage(damage);
             GameController.HIT.Invoke();
         }
         else if(hit.collider.CompareTag("Player"))
