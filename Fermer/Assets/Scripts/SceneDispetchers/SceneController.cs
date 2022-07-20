@@ -345,7 +345,6 @@ public class SceneController : MonoBehaviour
         currentWave.Add(Instantiate(enemy, pos, Quaternion.identity));
     }
 
-
     private IEnumerator KillWaveCoroutine()
     {
         StopCoroutine(CheckWaveCoroutine());
@@ -396,7 +395,6 @@ public class SceneController : MonoBehaviour
         }
         lineRenderer.enabled = false;
     }
-
 }
 
 [Serializable]
