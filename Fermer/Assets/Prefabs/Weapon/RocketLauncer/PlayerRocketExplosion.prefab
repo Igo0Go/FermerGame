@@ -14632,4 +14632,4 @@ MonoBehaviour:
   damage: 10
   force: 20
   scaleChangeSpeed: 10
-  maxRange: 20
+  maxRange: 10
