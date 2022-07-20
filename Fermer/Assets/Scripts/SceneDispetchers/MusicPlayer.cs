@@ -93,6 +93,8 @@ public class MusicPlayer : MonoBehaviour
             }
         }
 
+        yield return new WaitForSeconds(2);
+
         if (GameController.playerMusic != null && GameController.playerMusic.Count > 0)
         {
             Debug.Log("Вся музыка загружена");
