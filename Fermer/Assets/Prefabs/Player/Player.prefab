@@ -1133,11 +1133,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3666103969994573640, guid: 361ad3b6682c7cd4eaf0f1a54a0d36ed,
-        type: 3}
-      propertyPath: anim
-      value: 
-      objectReference: {fileID: 2810577332963582403}
     - target: {fileID: 3666103970839709991, guid: 361ad3b6682c7cd4eaf0f1a54a0d36ed,
         type: 3}
       propertyPath: m_Layer
@@ -2033,12 +2028,6 @@ PrefabInstance:
 --- !u!4 &2810577332963582401 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3666103969994573637, guid: 361ad3b6682c7cd4eaf0f1a54a0d36ed,
-    type: 3}
-  m_PrefabInstance: {fileID: 1576738236328453764}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &2810577332963582403 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 3666103969994573639, guid: 361ad3b6682c7cd4eaf0f1a54a0d36ed,
     type: 3}
   m_PrefabInstance: {fileID: 1576738236328453764}
   m_PrefabAsset: {fileID: 0}

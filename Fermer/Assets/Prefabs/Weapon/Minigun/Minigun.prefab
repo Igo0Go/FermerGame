@@ -105,18 +105,18 @@ MonoBehaviour:
     bulletLifeTime: 3
   bullet: {fileID: 2446405034159682727, guid: 3e0edf73afb418b4c840d7f259d04908, type: 3}
   bulletSpeed: 50
-  damage: 10
+  damage: 15
+  anim: {fileID: 3666103969994573639}
   shootPoint: {fileID: 3666103969856078621}
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 310
+    m_Bits: 438
   source: {fileID: 3666103970863366999}
   shoot: {fileID: 8300000, guid: 6a83ea895be860c42916d91104e61cdd, type: 3}
   reload: {fileID: 0}
   fight: {fileID: 8300000, guid: 6a0c53dfd71c7fe4a8caf911c459dee8, type: 3}
   type: 3
   lookPoint: {fileID: 0}
-  anim: {fileID: 0}
   opportunityToShoot: 0
   recoilTime: 0.04
   angle: 0.03
@@ -7117,11 +7117,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: d8c41be67f41aa545ae053b0b927f821, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.25000015
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: d8c41be67f41aa545ae053b0b927f821, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.7670003
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: d8c41be67f41aa545ae053b0b927f821, type: 3}
       propertyPath: m_LocalRotation.w
