@@ -260,8 +260,16 @@ public class SceneController : MonoBehaviour
     }
     private void SpawnEnemies(List<GameObject> enemies)
     {
-        StartCoroutine(SpawnEnemyWaveCoroutine(enemies));
+        if(currentWaveNumber == 0)
+        {
+            StartCoroutine(SpawnEnemyWaveWhileDialogueCoroutine(enemies));
+        }
+        else
+        {
+            StartCoroutine(SpawnEnemyWaveCoroutine(enemies));
+        }
     }
+
     private void SpawnAirBots()
     {
         int airBotsCount = currentWaveNumber < waves.Count ? waves[currentWaveNumber].airBotsCount : 5;
@@ -308,6 +316,26 @@ public class SceneController : MonoBehaviour
         }
         spawnCompleted = true;
     }
+    private IEnumerator SpawnEnemyWaveWhileDialogueCoroutine(List<GameObject> enemies)
+    {
+        int currentEnemyNumber = 0;
+        while (needListenDialogue)
+        {
+            GameObject item = enemies[currentEnemyNumber];
+            Vector3 pos = randomSpawnPoints[UnityEngine.Random.Range(0, randomSpawnPoints.Count)].position;
+            Instantiate(teleportPrefab, pos, Quaternion.identity);
+            yield return new WaitForSeconds(1);
+            currentWave.Add(Instantiate(item, pos, Quaternion.identity));
+
+            currentEnemyNumber++;
+            if(currentEnemyNumber > enemies.Count -1)
+            {
+                currentEnemyNumber = 0;
+            }
+            yield return new WaitForSeconds(2);
+        }
+        spawnCompleted = true;
+    }
     private IEnumerator SpawnEnemyCoroutine(GameObject enemy, Vector3 pos)
     {
         Instantiate(teleportPrefab, pos, Quaternion.identity);
@@ -316,6 +344,7 @@ public class SceneController : MonoBehaviour
 
         currentWave.Add(Instantiate(enemy, pos, Quaternion.identity));
     }
+
 
     private IEnumerator KillWaveCoroutine()
     {
