@@ -48,7 +48,7 @@ public static class GameController
 
     public static List<AudioClip> playerMusic;
 
-    public static float MusicVolume = 0.4f;
+    public static float MusicVolume = 0.25f;
     public static float SoundsVolume = 0.25f;
     public static float VoicesVolume = 1;
     public static float MouseSensivity = 0.5f;
