@@ -15,6 +15,7 @@ public class Goose : Enemy //Гусь с ракетной установкой (
     [SerializeField, Range(1, 50), Tooltip("Скорость запуска снаряда")] float bulletSpeed = 10;
     [SerializeField, Tooltip("Точки, в которых бдут по очереди появляться снаряды при выстреле")] List<Transform> shootPoints;
     [SerializeField, Range(0, 3)] private float timeBetweenShootActions = 1f;
+    [SerializeField, Min(0)] private float rocketLifeTime = 8;
 
     private NavMeshAgent agent;
     private EnemyState state;
@@ -132,10 +133,10 @@ public class Goose : Enemy //Гусь с ракетной установкой (
     private void ShootAction()
     {
         shootPoints[currentShootPoint].LookAt(target);
-        GameObject currentBullet = Instantiate(bulletPrefab) as GameObject;
+        GameObject currentBullet = Instantiate(bulletPrefab);
         currentBullet.transform.SetPositionAndRotation(shootPoints[currentShootPoint].position, transform.rotation);
         Bullet bulletScript = currentBullet.GetComponent<Bullet>();
-        bulletScript.Init(bulletSpeed, 5, damage, ignoreMask);
+        bulletScript.Init(bulletSpeed, rocketLifeTime, damage, ignoreMask);
         if (bulletScript is TargetTrackerBullet bullet)
         {
             bullet.SetTarget(target);

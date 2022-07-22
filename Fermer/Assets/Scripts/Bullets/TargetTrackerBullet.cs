@@ -73,5 +73,4 @@ public class TargetTrackerBullet : Bullet //Снаряд, который дов�
             other.GetComponent<Turret>().RemoveTarget(transform);
         }
     }
-
 }
