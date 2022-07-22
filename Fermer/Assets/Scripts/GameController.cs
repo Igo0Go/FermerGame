@@ -33,6 +33,7 @@ public static class GameController
     public static UnityEvent<int> WEAPON_ARE_CHANGED { get; private set; }
     public static UnityEvent<int> AMMO_ARE_CHANGED { get; private set; }
     public static UnityEvent RETURN_TO_DEFAULT { get; private set; }
+    public static UnityEvent BLOCK_OPPORTUNITY_TO_CHANGE_WEAPON { get; private set; }
 
     public static UnityEvent<int> TAKE_BONUS_JUMP { get; private set; }
     public static UnityEvent<int> TAKE_BONUS_SPEED { get; private set; }
@@ -89,6 +90,7 @@ public static class GameController
         WEAPON_READY = new UnityEvent();
         WEAPON_ARE_CHANGED = new UnityEvent<int>();
         AMMO_ARE_CHANGED = new UnityEvent<int>();
+        BLOCK_OPPORTUNITY_TO_CHANGE_WEAPON = new UnityEvent();
 
         RETURN_TO_DEFAULT = new UnityEvent();
 
