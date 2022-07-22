@@ -60,7 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemObject: {fileID: 2728449276721398284}
   rotationSpeed: 10
-  moveSpeed: 30
+  moveSpeed: 20
   physics: 0
   deleted: 1
   target: {fileID: 0}

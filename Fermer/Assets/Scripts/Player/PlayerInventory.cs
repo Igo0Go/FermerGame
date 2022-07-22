@@ -23,6 +23,7 @@ public class PlayerInventory : MonoBehaviour
         GameController.TAKE_BONUS_DAMAGE.AddListener(OnTakeBonusDamage);
         GameController.RETURN_TO_DEFAULT.AddListener(OnReturnToDefault);
         GameController.START_FINAL_LOADING.AddListener(HideAllWeapon);
+        GameController.BLOCK_OPPORTUNITY_TO_CHANGE_WEAPON.AddListener(BlockOpportunityToChangeWeapon);
 
         ConsoleEventCenter.Gun.Execute.AddListener(OnConsoleGunCommand);
 
@@ -102,6 +103,11 @@ public class PlayerInventory : MonoBehaviour
                 CheckWeaponForChange(3);
             }
         }
+    }
+
+    private void BlockOpportunityToChangeWeapon()
+    {
+        opportunityToChangeWeapon = false;
     }
 
     private void OnReturnToDefault()

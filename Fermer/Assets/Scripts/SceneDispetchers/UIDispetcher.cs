@@ -46,6 +46,7 @@ public class UIDispetcher : MonoBehaviour
     [SerializeField] private Animator scoreMultiplicatorAnim;
     [SerializeField] private List<Animator> damageMarkersAnimators;
     [SerializeField] private Animator damagePanelAnim;
+    [SerializeField] private GameObject hardDamagePanel;
     [SerializeField] private Image shieldPanel;
 
     [SerializeField, Range(1,120)] private float jumpBonusTime = 60;
@@ -109,6 +110,7 @@ public class UIDispetcher : MonoBehaviour
         GameController.PLAYER_MUSIC_LOAD_CLIP_COMPLETED.AddListener(OnClipLoaded);
         GameController.PLAYER_MUSIC_LOADED.AddListener(OnAllMusicLoaded);
 
+        hardDamagePanel.SetActive(false);
         blackPanel.gameObject.SetActive(true);
         blackPanel.color = Color.black;
         shieldPanel.color = new Color(shieldPanel.color.r, shieldPanel.color.g, shieldPanel.color.b, 0);
@@ -287,7 +289,16 @@ public class UIDispetcher : MonoBehaviour
         }
         else
         {
-           damagePanelAnim.SetTrigger("Damage");
+            damagePanelAnim.SetTrigger("Damage");
+        }
+
+        if (healthSlider.value > 30)
+        {
+            hardDamagePanel.SetActive(false);
+        }
+        else
+        {
+            hardDamagePanel.SetActive(true);
         }
     }
     private void OnChangeMaxHealth(float value)
