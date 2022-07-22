@@ -32,6 +32,8 @@ public class SceneController : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject playerUI;
 
+    [SerializeField] private List<SpecWave> specWaves;
+
     private ReplicDispether replicDispether;
     private int currentWaveNumber;
     [SerializeField]
@@ -154,6 +156,32 @@ public class SceneController : MonoBehaviour
         needListenDialogue = needKillEnemies = true;
         rayToLast = false;
         currentWave = new List<GameObject>();
+
+        for (int i = 0; i < specWaves.Count; i++)
+        {
+            if (specWaves[i].waveNumber-1 == currentWaveNumber)
+            {
+                switch (specWaves[i].reward)
+                {
+                    case BonusType.Speed:
+                        GameController.TAKE_BONUS_SPEED.Invoke(3);
+                        break;
+                    case BonusType.Jump:
+                        GameController.TAKE_BONUS_JUMP.Invoke(3);
+                        break;
+                    case BonusType.Damage:
+                        GameController.TAKE_BONUS_DAMAGE.Invoke(3);
+                        break;
+                    case BonusType.Invulnerable:
+                        GameController.TAKE_BONUS_INVULNERABLE.Invoke(3);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            }
+        }
+
         currentWaveNumber++;
         GameController.NEXT_WAVE.Invoke(currentWaveNumber);
         replicDispether.replicasEnd.AddListener(OnDialogueEnd);
@@ -201,9 +229,31 @@ public class SceneController : MonoBehaviour
     }
     private void RandomWave()
     {
-        ChangeCubesRandom();
-        SpawnEnemies(randomBots);
-        SpawnAirBots();
+        bool specwave = false;
+        for (int i = 0; i < specWaves.Count; i++)
+        {
+            if(specWaves[i].waveNumber-1 == currentWaveNumber)
+            {
+                List<GameObject> specBots = new List<GameObject>();
+
+                for (int j = 0; j < specWaves[i].countOfBot; j++)
+                {
+                    specBots.Add(specWaves[i].specBot);
+                }
+                SpawnEnemies(specBots);
+                TryChangeCubesToDefault();
+                specwave = true;
+                break;
+            }
+        }
+
+        if(!specwave)
+        {
+            SpawnEnemies(randomBots);
+            SpawnAirBots();
+            ChangeCubesRandom();
+        }
+
         List<ReplicItem> currentRandomReplic = new List<ReplicItem>() { randomReplic[UnityEngine.Random.Range(0, randomReplic.Count)] };
         replicDispether.AddInList(currentRandomReplic);
     }
@@ -212,10 +262,6 @@ public class SceneController : MonoBehaviour
         musicPlayer.StopAllAndStartThisClipAsLoop(alarmMusic);
 
         alarm = true;
-        if(controlMovingCubes)
-        {
-            arenaController.AllToDefault();
-        }
         foreach (var item in alarmBots)
         {
             currentWave.Add(Instantiate(item, 
@@ -230,6 +276,13 @@ public class SceneController : MonoBehaviour
         Invoke(nameof(LoadFinalScene), 4);
     }
 
+    private void TryChangeCubesToDefault()
+    {
+        if (controlMovingCubes)
+        {
+            arenaController.AllToDefault();
+        }
+    }
     private void ChangeCubes()
     {
         if (currentWaveNumber > 0 && controlMovingCubes)
@@ -405,4 +458,17 @@ public class Wave
     public int airBotsCount;
     public GameObject spawnPrefab;
     public List<ReplicItem> voicesForWave;
+}
+
+[Serializable]
+public class SpecWave
+{
+    [Min(0)]
+    public int waveNumber;
+
+    public GameObject specBot;
+    [Min(1)]
+    public int countOfBot;
+
+    public BonusType reward;
 }
