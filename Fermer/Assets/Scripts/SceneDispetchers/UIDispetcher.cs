@@ -46,6 +46,7 @@ public class UIDispetcher : MonoBehaviour
     [SerializeField] private Animator scoreMultiplicatorAnim;
     [SerializeField] private List<Animator> damageMarkersAnimators;
     [SerializeField] private Animator damagePanelAnim;
+    [SerializeField] private Image shieldPanel;
 
     [SerializeField, Range(1,120)] private float jumpBonusTime = 60;
     [SerializeField, Range(1, 120)] private float speedBonusTime = 60;
@@ -110,6 +111,7 @@ public class UIDispetcher : MonoBehaviour
 
         blackPanel.gameObject.SetActive(true);
         blackPanel.color = Color.black;
+        shieldPanel.color = new Color(shieldPanel.color.r, shieldPanel.color.g, shieldPanel.color.b, 0);
 
         settingsPanel.SetActive(true);
 
@@ -242,16 +244,18 @@ public class UIDispetcher : MonoBehaviour
     {
         if (value == 1)
         {
+            StopCoroutine(ShieldWorkCoroutine());
+            invilnvurableBonusSlider.value = 0;
             invilnvurableBonusSlider.gameObject.SetActive(false);
-            damagePanelAnim.SetBool("NoDamaged", false);
+            shieldPanel.color = new Color(shieldPanel.color.r, shieldPanel.color.g, shieldPanel.color.b, 0);
         }
         else
         {
             bonusPanel.SetActive(true);
-            damagePanelAnim.SetBool("NoDamaged", true);
             invilnvurableBonusSlider.gameObject.SetActive(true);
             invilnvurableBonusSlider.maxValue = invilnirableBonusTime;
             invilnvurableBonusSlider.value = invilnirableBonusTime;
+            StartCoroutine(ShieldWorkCoroutine());
         }
     }
 
@@ -477,5 +481,16 @@ public class UIDispetcher : MonoBehaviour
     private void ReturnHitMarker()
     {
         hitMarker.SetActive(false);
+    }
+
+    private IEnumerator ShieldWorkCoroutine()
+    {
+        float t = 0;
+        while (invilnvurableBonusSlider.value > 0)
+        {
+            t += Time.deltaTime;
+            shieldPanel.color = new Color(shieldPanel.color.r, shieldPanel.color.g, shieldPanel.color.b, Mathf.PingPong(t, 1));
+            yield return null;
+        }
     }
 }
