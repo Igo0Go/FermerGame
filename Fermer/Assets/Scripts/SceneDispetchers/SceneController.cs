@@ -146,6 +146,14 @@ public class SceneController : MonoBehaviour
     {
         needListenDialogue = false;
 
+        if (currentWaveNumber < waves.Count && waves[currentWaveNumber].spawnPrefab != null)
+        {
+            if (!waves[currentWaveNumber].spawnPrefab.TryGetComponent(out Enemy e))
+            {
+                Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
+            }
+        }
+
         if (needKillEnemies)
             StartCoroutine(CheckWaveCoroutine());
     }
@@ -193,10 +201,6 @@ public class SceneController : MonoBehaviour
                 if(waves[currentWaveNumber].spawnPrefab.TryGetComponent(out Enemy e))
                 {
                     StartCoroutine(SpawnEnemyCoroutine(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position));
-                }
-                else
-                {
-                    Instantiate(waves[currentWaveNumber].spawnPrefab, lootSpawnPoint.position, Quaternion.identity);
                 }
             }
 
